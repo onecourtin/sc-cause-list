@@ -2,13 +2,15 @@ name: Scrape SC cause lists
 
 on:
   schedule:
-    # SCI publishes the next day's main list in the evening and keeps adding
-    # supplementary and revised lists late into the night and early morning.
-    # Every 30 min from 16:00 to 09:30 IST, hourly through the working day.
-    # (GitHub cron is UTC and often runs a few minutes late.)
-    - cron: "0,30 10-23 * * *"   # 15:30–05:00 IST
-    - cron: "0,30 0-4 * * *"     # 05:30–10:00 IST
-    - cron: "0 5-9 * * *"        # 10:30–14:30 IST, hourly
+    # Checks run 9:00 AM – 11:00 PM IST only; nothing overnight.
+    # Every 30 min in the morning and evening (when SCI publishes lists),
+    # hourly in between. GitHub cron is UTC (IST = UTC+5:30) and often runs
+    # a few minutes late.
+    - cron: "30 3 * * *"       # 09:00 IST
+    - cron: "0,30 4 * * *"     # 09:30, 10:00 IST
+    - cron: "0 5-9 * * *"      # 10:30 – 14:30 IST, hourly
+    - cron: "30 9-17 * * *"    # 15:00 – 23:00 IST, on the hour
+    - cron: "0 10-17 * * *"    # 15:30 – 22:30 IST, on the half hour
   workflow_dispatch:
     inputs:
       days_back:

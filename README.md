@@ -28,7 +28,7 @@ its PDFs directly — the scraper does it on a schedule instead.
 `N` = 1 for the main list, 2+ for supplementary lists. A file that doesn't
 exist comes back as an empty body, so the scraper checks for `%PDF`.
 
-Each run checks 2 days back to 7 days ahead. Unchanged PDFs are skipped by
+Runs 9:00 AM – 11:00 PM IST (every 30 min morning and evening, hourly midday), none overnight. Each run checks 2 days back to 7 days ahead. Unchanged PDFs are skipped by
 ETag (`304`), so a quiet run takes seconds and commits nothing. Revised lists
 are picked up automatically. Dates older than 60 days are pruned.
 
