@@ -261,8 +261,14 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
   var LOCAL = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || location.protocol === "file:";
   var DATA = LOCAL ? "data/" : "https://raw.githubusercontent.com/onecourtin/sc-cause-list/main/data/";
 
-  var KIND = { J: "Courts", S: "Single Judge", C: "Chamber", R: "Registrar" };
-  var KIND_ORDER = ["J", "S", "C", "R"];
+  // List kinds. An "F" prefix is the regular-hearing version of the same kind.
+  var KIND = {
+    J: "Miscellaneous", FJ: "Regular Hearing",
+    S: "Single Judge", FS: "Single Judge (Regular)",
+    C: "Chamber", FC: "Chamber (Regular)",
+    R: "Registrar", FR: "Registrar (Regular)"
+  };
+  var KIND_ORDER = ["J", "FJ", "S", "FS", "C", "FC", "R", "FR"];
   var MAX_RESULTS = 300;
 
   var $ = function (id) { return document.getElementById(id); };
@@ -328,7 +334,7 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
   });
 
   // ── Courts ────────────────────────────────────────────────────────────
-  function kindOf(b) { return b.list.split("_")[1]; }
+  function kindOf(b) { var p = b.list.split("_"); return (p[0] === "F" ? "F" : "") + p[1]; }
   function isSupp(b) { return b.list.split("_")[2] !== "1"; }
   function isRegular(b) { return b.list.charAt(0) === "F"; }
   // Labels after the court name: which list this bench block comes from.
@@ -346,7 +352,10 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
     var base = /CHIEF JUSTICE/i.test(court) ? "Chief Justice's Court"
       : /registrar/i.test(court) ? "Registrar Court " + courtShort(court)
       : "Court " + courtShort(court);
-    return kind === "J" || kind === "R" ? base : base + " · " + KIND[kind];
+    // Regular-hearing benches carry a green "Regular Hearing" badge instead
+    // of a suffix, so only the base kind (Single Judge, Chamber) is named.
+    var k = kind.replace(/^F/, "");
+    return k === "J" || k === "R" ? base : base + " · " + KIND[k];
   }
   function courtSortKey(c) { return c === "CJI" ? 0 : (parseInt(c, 10) || 999); }
 
