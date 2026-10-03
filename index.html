@@ -268,8 +268,6 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
   var state = { index: null, date: null, day: null, court: null, q: "" };
   var cache = {};
 
-  function store(k, v) { try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} }
-  function recall(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
 
   function esc(s) {
     return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
@@ -562,7 +560,6 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
 
   function selectCourt(key) {
     state.court = key;
-    store("oc-sc-court", key);
     writeHash();
     render();
   }
@@ -579,11 +576,12 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
     p.then(function (day) {
       if (state.date !== date) return;
       state.day = day;
-      // Keep the same court across dates when it sits that day.
+      // Keep the same court across dates when it sits that day; otherwise
+      // (and on a fresh visit) open the CJI's court.
       var keys = day.courts.map(function (c) { return c.key; });
       if (keys.indexOf(state.court) < 0) {
-        var saved = recall("oc-sc-court");
-        state.court = keys.indexOf(saved) >= 0 ? saved : keys[0];
+        var cji = day.courts.filter(function (c) { return c.kind === "J" && /CHIEF JUSTICE/i.test(c.court); })[0];
+        state.court = cji ? cji.key : keys[0];
       }
       renderPicker();
       renderSources();
