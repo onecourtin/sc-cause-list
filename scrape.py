@@ -386,8 +386,19 @@ def _merge(benches: list[dict]) -> list[dict]:
 
 # ── Fetching ─────────────────────────────────────────────────────────────────
 
+# Tally of request outcomes, printed at the end so a run that was blocked
+# (403s, HTML error pages) can't pass for a quiet "no changes" run.
+STATS: dict[str, int] = {}
+
+
 def fetch(session: requests.Session, url: str, prev: dict | None):
-    """Return (status, body, meta). status is 'new', 'same' or 'missing'."""
+    """Return (status, body, meta). status is 'new', 'same', 'missing' or 'error'."""
+    status, body, meta = _fetch(session, url, prev)
+    STATS[status] = STATS.get(status, 0) + 1
+    return status, body, meta
+
+
+def _fetch(session: requests.Session, url: str, prev: dict | None):
     headers = {}
     if prev and prev.get("etag"):
         headers["If-None-Match"] = prev["etag"]
@@ -402,8 +413,13 @@ def fetch(session: requests.Session, url: str, prev: dict | None):
             time.sleep(3 * (attempt + 1))
     if r.status_code == 304:
         return "same", None, prev
-    if r.status_code != 200 or not r.content.startswith(b"%PDF"):
+    if r.status_code == 404 or (r.status_code == 200 and not r.content):
         return "missing", None, None
+    if r.status_code != 200 or not r.content.startswith(b"%PDF"):
+        # Anything else (403, 5xx, an HTML page) means we didn't get a real
+        # answer — don't mistake it for "this list doesn't exist".
+        print(f"  ! {url}: HTTP {r.status_code}, {len(r.content)} bytes, {r.headers.get('Content-Type', '')}", file=sys.stderr)
+        return "error", None, None
     meta = {
         "etag": r.headers.get("ETag", ""),
         "modified": r.headers.get("Last-Modified", ""),
@@ -522,6 +538,11 @@ def main():
     for date in dates:
         print(f"{date}")
         changed |= scrape_date(session, date, index, args.force)
+
+    print("Requests: " + ", ".join(f"{k} {v}" for k, v in sorted(STATS.items())))
+    if STATS.get("error") and not (STATS.get("new") or STATS.get("same")):
+        print("::error::Every request to SCI failed — the site may be blocking this runner.")
+        sys.exit(1)
 
     cutoff = (today - dt.timedelta(days=args.keep_days)).isoformat()
     for date in list(index["dates"]):
