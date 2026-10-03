@@ -1,0 +1,223 @@
+{
+ "dates": {
+  "2026-09-29": {
+   "files": {
+    "M_J_1": {
+     "etag": "\"10b56d-65c507f8aa29f\"",
+     "modified": "Fri, 25 Sep 2026 15:37:47 GMT",
+     "sha": "6079a256a07ced77",
+     "bytes": 1095021,
+     "published": "25-09-2026 20:55:04"
+    },
+    "M_J_2": {
+     "etag": "\"8e0db-65c8c84be0e16\"",
+     "modified": "Mon, 28 Sep 2026 15:14:12 GMT",
+     "sha": "a25d7f1c767ada3e",
+     "bytes": 581851,
+     "published": "28-09-2026 20:13:53"
+    },
+    "M_R_1": {
+     "etag": "\"8069d-65c4b6c9633da\"",
+     "modified": "Fri, 25 Sep 2026 09:34:34 GMT",
+     "sha": "c917146df13a4b3c",
+     "bytes": 525981,
+     "published": "25-09-2026 15:03:54"
+    },
+    "M_R_2": {
+     "etag": "\"7b7cc-65c8a1a69e5ac\"",
+     "modified": "Mon, 28 Sep 2026 12:21:18 GMT",
+     "sha": "dab25c2c4fd6caf8",
+     "bytes": 505804,
+     "published": "28-09-2026 17:50:44"
+    }
+   },
+   "items": 1436,
+   "fetched": "2026-10-02 15:01 IST"
+  },
+  "2026-09-30": {
+   "files": {
+    "M_J_1": {
+     "etag": "\"c78ac-65c9fb3296123\"",
+     "modified": "Tue, 29 Sep 2026 14:07:15 GMT",
+     "sha": "235749c6cf13144e",
+     "bytes": 817324,
+     "published": "26-09-2026 18:16:27"
+    },
+    "M_J_2": {
+     "etag": "\"9e9fe-65caeb83eff50\"",
+     "modified": "Wed, 30 Sep 2026 08:02:25 GMT",
+     "sha": "5cf2a492242554c2",
+     "bytes": 649726,
+     "published": "29-09-2026 20:38:47"
+    },
+    "M_R_1": {
+     "etag": "\"806b2-65c5f7718ec3f\"",
+     "modified": "Sat, 26 Sep 2026 09:29:10 GMT",
+     "sha": "0a985ee095962e4c",
+     "bytes": 526002,
+     "published": "26-09-2026 14:58:24"
+    },
+    "M_R_2": {
+     "etag": "\"7b459-65c9dd3a6b452\"",
+     "modified": "Tue, 29 Sep 2026 11:53:10 GMT",
+     "sha": "28d56c6baa43df2a",
+     "bytes": 504921,
+     "published": "29-09-2026 17:22:54"
+    }
+   },
+   "items": 991,
+   "fetched": "2026-10-02 15:00 IST"
+  },
+  "2026-10-01": {
+   "files": {
+    "M_J_1": {
+     "etag": "\"cc324-65cb3866ff58b\"",
+     "modified": "Wed, 30 Sep 2026 13:46:24 GMT",
+     "sha": "0f1a3fb4f879cae8",
+     "bytes": 836388,
+     "published": "28-09-2026 21:50:55"
+    },
+    "M_J_2": {
+     "etag": "\"95c38-65cb5cb2ef908\"",
+     "modified": "Wed, 30 Sep 2026 16:28:47 GMT",
+     "sha": "39d64534cde27f14",
+     "bytes": 613432,
+     "published": "30-09-2026 21:45:49"
+    },
+    "M_S_1": {
+     "etag": "\"80f6c-65cb39eb1cab6\"",
+     "modified": "Wed, 30 Sep 2026 13:53:11 GMT",
+     "sha": "cb34eddcea9a50c4",
+     "bytes": 528236,
+     "published": "28-09-2026 21:46:12"
+    },
+    "M_S_2": {
+     "etag": "\"7bd41-65cb5cf989a11\"",
+     "modified": "Wed, 30 Sep 2026 16:30:01 GMT",
+     "sha": "79dd20425b3cb7d2",
+     "bytes": 507201,
+     "published": "30-09-2026 21:59:07"
+    },
+    "M_C_1": {
+     "etag": "\"84dca-65c8bade5d740\"",
+     "modified": "Mon, 28 Sep 2026 14:14:07 GMT",
+     "sha": "923a235aefdfb091",
+     "bytes": 544202,
+     "published": "28-09-2026 19:04:40"
+    },
+    "M_C_2": {
+     "etag": "\"7b9d2-65cb5363db645\"",
+     "modified": "Wed, 30 Sep 2026 15:47:09 GMT",
+     "sha": "e526926dc68c3f6d",
+     "bytes": 506322,
+     "published": "30-09-2026 21:15:29"
+    },
+    "M_R_1": {
+     "etag": "\"81b90-65c8a1b348d8b\"",
+     "modified": "Mon, 28 Sep 2026 12:21:31 GMT",
+     "sha": "ac8c11798f39fc50",
+     "bytes": 531344,
+     "published": "28-09-2026 17:50:53"
+    },
+    "M_R_2": {
+     "etag": "\"7c895-65cb3866dc6f0\"",
+     "modified": "Wed, 30 Sep 2026 13:46:24 GMT",
+     "sha": "0c916d8f6895bd67",
+     "bytes": 510101,
+     "published": "30-09-2026 19:16:01"
+    }
+   },
+   "items": 1368,
+   "fetched": "2026-10-02 14:58 IST"
+  },
+  "2026-10-05": {
+   "files": {
+    "M_J_1": {
+     "etag": "\"ea569-65cb6db171e89\"",
+     "modified": "Wed, 30 Sep 2026 17:44:49 GMT",
+     "sha": "cfd1e34c0cfd9fbb",
+     "bytes": 959849,
+     "published": "30-09-2026 23:04:49"
+    },
+    "M_S_1": {
+     "etag": "\"81e16-65cc4268130c7\"",
+     "modified": "Thu, 01 Oct 2026 09:36:29 GMT",
+     "sha": "d429930653facc16",
+     "bytes": 531990,
+     "published": "30-09-2026 22:53:44"
+    },
+    "M_C_1": {
+     "etag": "\"8786d-65cb54cb3a293\"",
+     "modified": "Wed, 30 Sep 2026 15:53:25 GMT",
+     "sha": "d4f2ce16c2c62542",
+     "bytes": 555117,
+     "published": "30-09-2026 21:17:34"
+    },
+    "M_R_1": {
+     "etag": "\"7f4ee-65cc4a00a6511\"",
+     "modified": "Thu, 01 Oct 2026 10:10:28 GMT",
+     "sha": "9172d4a79e1d98a0",
+     "bytes": 521454,
+     "published": "01-10-2026 15:40:02"
+    },
+    "M_J_2": {
+     "etag": "\"9981e-65cee9d594f9c\"",
+     "modified": "Sat, 03 Oct 2026 12:16:12 GMT",
+     "sha": "29e4f8e07482acc7",
+     "bytes": 628766,
+     "published": "03-10-2026 17:36:01"
+    },
+    "M_S_2": {
+     "etag": "\"7bc95-65cee91c56f7f\"",
+     "modified": "Sat, 03 Oct 2026 12:12:57 GMT",
+     "sha": "df685d2bdbae2555",
+     "bytes": 507029,
+     "published": "03-10-2026 17:42:13"
+    },
+    "M_C_2": {
+     "etag": "\"7d46e-65cec5069f004\"",
+     "modified": "Sat, 03 Oct 2026 09:31:31 GMT",
+     "sha": "6c6fe4e215533c8f",
+     "bytes": 513134,
+     "published": "03-10-2026 14:57:07"
+    }
+   },
+   "items": 1594,
+   "fetched": "2026-10-03 19:17 IST"
+  },
+  "2026-10-06": {
+   "files": {
+    "M_J_1": {
+     "etag": "\"11d514-65cc9357e7d39\"",
+     "modified": "Thu, 01 Oct 2026 15:38:35 GMT",
+     "sha": "adc5e822a0be5025",
+     "bytes": 1168660,
+     "published": "01-10-2026 20:55:39"
+    },
+    "M_R_1": {
+     "etag": "\"7fea9-65ce9db43de14\"",
+     "modified": "Sat, 03 Oct 2026 06:35:36 GMT",
+     "sha": "48d3491da2b92be9",
+     "bytes": 523945,
+     "published": "03-10-2026 12:04:59"
+    }
+   },
+   "items": 1553,
+   "fetched": "2026-10-03 19:17 IST"
+  },
+  "2026-10-07": {
+   "files": {
+    "M_J_1": {
+     "etag": "\"d9f5f-65ceeb0512c5b\"",
+     "modified": "Sat, 03 Oct 2026 12:21:30 GMT",
+     "sha": "35873c0953c40a12",
+     "bytes": 892767,
+     "published": "03-10-2026 17:46:45"
+    }
+   },
+   "items": 792,
+   "fetched": "2026-10-03 19:17 IST"
+  }
+ },
+ "updated": "2026-10-03 19:17 IST"
+}
