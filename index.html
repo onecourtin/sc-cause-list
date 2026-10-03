@@ -258,7 +258,7 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
   // Data is published by the scraper's GitHub Action. Locally, read the
   // checked-out data/ folder so the page can be tested without pushing.
   var LOCAL = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || location.protocol === "file:";
-  var DATA = LOCAL ? "data/" : "https://raw.githubusercontent.com/onecourtols/sc-cause-list/main/data/";
+  var DATA = LOCAL ? "data/" : "https://raw.githubusercontent.com/onecourtin/sc-cause-list/main/data/";
 
   var KIND = { J: "Courts", S: "Single Judge", C: "Chamber", R: "Registrar" };
   var KIND_ORDER = ["J", "S", "C", "R"];

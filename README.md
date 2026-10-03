@@ -66,7 +66,7 @@ On localhost the page reads `data/`; anywhere else it reads this repo's
 
 ## Deploying
 
-- **Data:** push this repo to `github.com/onecourtols/sc-cause-list` (public —
+- **Data:** push this repo to `github.com/onecourtin/sc-cause-list` (public —
   Actions minutes are free and raw files are readable). The workflow runs on
   its own; trigger it once by hand from the Actions tab.
 - **Page:** upload `index.html` to `public_html/sc/causelist/index.html` on
