@@ -25,6 +25,7 @@ its PDFs directly — the scraper does it on a schedule instead.
 | `C` | Chamber matters |
 | `R` | Registrar courts |
 
+Files start `M_` (miscellaneous hearing) or `F_` (regular hearing, Tue–Thu).
 `N` = 1 for the main list, 2+ for supplementary lists. A file that doesn't
 exist comes back as an empty body, so the scraper checks for `%PDF`.
 

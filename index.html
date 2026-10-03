@@ -90,6 +90,7 @@ select.older{font-family:inherit;font-size:13px;padding:6px 8px;border:1.5px sol
 .bench{background:var(--paper);border:1.5px solid var(--line);margin-bottom:20px;}
 .bench-head{padding:16px 18px;border-bottom:1.5px solid var(--line);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;}
 .bench-court{font-size:22px;font-weight:800;letter-spacing:-.02em;line-height:1.15;}
+.bench-court small.reg{color:var(--ok);}
 .bench-court small{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-left:8px;vertical-align:middle;}
 .judges{margin-top:6px;font-size:13.5px;line-height:1.6;}
 .judges div::before{content:"";display:inline-block;width:5px;height:5px;background:var(--gold);margin:0 8px 2px 0;}
@@ -329,6 +330,12 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
   // ── Courts ────────────────────────────────────────────────────────────
   function kindOf(b) { return b.list.split("_")[1]; }
   function isSupp(b) { return b.list.split("_")[2] !== "1"; }
+  function isRegular(b) { return b.list.charAt(0) === "F"; }
+  // Labels after the court name: which list this bench block comes from.
+  function listBadges(b) {
+    return (isRegular(b) ? '<small class="reg">Regular Hearing</small>' : "") +
+      (isSupp(b) ? "<small>Supplementary</small>" : "");
+  }
   function courtKey(b) { return kindOf(b) + ":" + b.court; }
   function courtShort(court) {
     if (/CHIEF JUSTICE/i.test(court)) return "CJI";
@@ -453,10 +460,9 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
   }
 
   function benchHeadHTML(b, kind) {
-    var tags = (b.tags || []).filter(function (t) { return !/^MISCELLANEOUS HEARING$/i.test(t); });
-    var supp = isSupp(b);
+    var tags = (b.tags || []).filter(function (t) { return !/^(MISCELLANEOUS|REGULAR) HEARING$|^SUPPLEMENTARY LIST$/i.test(t); });
     return '<div class="bench-head"><div>' +
-        '<div class="bench-court">' + esc(courtLong(kind, b.court)) + (supp ? "<small>Supplementary</small>" : "") + "</div>" +
+        '<div class="bench-court">' + esc(courtLong(kind, b.court)) + listBadges(b) + "</div>" +
         '<div class="judges">' + b.judges.map(function (j) { return "<div>" + esc(j) + "</div>"; }).join("") + "</div>" +
       "</div>" +
       '<div class="bench-side">' +
@@ -502,7 +508,7 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
         cur = h.bi;
         var b = day.benches[h.bi];
         html += '<section class="bench"><div class="bench-head"><div><div class="bench-court">' +
-          esc(courtLong(kindOf(b), b.court)) + (isSupp(b) ? "<small>Supplementary</small>" : "") + '</div><div class="judges">' +
+          esc(courtLong(kindOf(b), b.court)) + listBadges(b) + '</div><div class="judges">' +
           b.judges.map(function (j) { return "<div>" + esc(j) + "</div>"; }).join("") + "</div></div>" +
           '<div class="bench-side">' + (b.time ? '<div class="time">' + esc(b.time) + "</div>" : "") +
           '<button class="court-link" type="button" data-open="' + esc(courtKey(b)) + '">Open full court list →</button></div></div>';

@@ -49,6 +49,8 @@ LIST_KINDS = [
     ("C", "Chamber"),
     ("R", "Registrar"),
 ]
+# M = miscellaneous-hearing lists, F = regular-hearing lists (Tue–Thu).
+PREFIXES = [("M", ""), ("F", "Regular Hearing")]
 MAX_PARTS = 4  # _1 main, _2.._4 supplementary
 
 HEADERS = {
@@ -269,14 +271,25 @@ def parse_pdf(path_or_bytes, list_name: str) -> tuple[list[dict], str | None]:
             if text.startswith("SNo.") or text in ("Petitioner / Respondent", "Petitioner/Respondent", "Advocate"):
                 continue
 
+            if ln["bold"] and ln["size"] >= 10.5:
+                # Section headings are set larger than the 9pt body text;
+                # long ones span the page and can start near the margin.
+                col = None
             if col is None:
                 # Centred bold line: a section heading (e.g. "[BAIL MATTERS]")
                 # or a hearing-type heading ("PART HEARD MATTERS").
                 centred = abs((ln["x0"] + ln["x1"]) / 2 - PAGE_MID) < 25
-                if centred and ln["bold"] and len(text) < 90:
+                if ln["bold"] and (ln["size"] >= 10.5 or (centred and len(text) < 90)):
                     close_item()
-                    section = {"t": _clean(text), "items": []}
-                    bench["sections"].append(section)
+                    if section is not None and not section["items"] and section.get("open"):
+                        # No matters since the last heading line: this is
+                        # either a wrapped continuation of a long subject
+                        # heading (regular-hearing lists) or a sub-heading.
+                        sep = " — " if text.startswith("[") or section["t"].endswith("]") else " "
+                        section["t"] = _clean(section["t"] + sep + text)
+                    else:
+                        section = {"t": _clean(text), "items": [], "open": True}
+                        bench["sections"].append(section)
                 else:
                     close_item()
                     add_note(text)
@@ -356,6 +369,8 @@ def parse_pdf(path_or_bytes, list_name: str) -> tuple[list[dict], str | None]:
     # Drop sections that ended up empty (e.g. a heading followed by a footer).
     for b in benches:
         b["sections"] = [s for s in b["sections"] if s["items"]]
+        for s in b["sections"]:
+            s.pop("open", None)
         if not b["tags"]:
             del b["tags"]
         b["notes"] = [n for n in b["notes"] if not re.fullmatch(r"(NOTE\s*:?-?|\.)", n)]
@@ -432,9 +447,16 @@ def _fetch(session: requests.Session, url: str, prev: dict | None):
 
 
 def label_for(name: str) -> str:
-    _, kind, part = name.split("_")
+    prefix, kind, part = name.split("_")
     base = dict(LIST_KINDS).get(kind, kind)
+    if prefix == "F":
+        base = "Regular Hearing" if kind == "J" else f"Regular Hearing ({base})"
     return base if part == "1" else f"{base} — Supplementary" + ("" if part == "2" else f" {int(part) - 1}")
+
+
+def list_order(name: str):
+    prefix, kind, part = name.split("_")
+    return ([k for k, _ in LIST_KINDS].index(kind), [p for p, _ in PREFIXES].index(prefix), int(part))
 
 
 def scrape_date(session, date: str, index: dict, force: bool) -> bool:
@@ -444,9 +466,9 @@ def scrape_date(session, date: str, index: dict, force: bool) -> bool:
     changed = False
     fresh: dict[str, bytes] = {}
 
-    for kind, _ in LIST_KINDS:
+    for prefix, kind in [(p, k) for k, _ in LIST_KINDS for p, _ in PREFIXES]:
         for part in range(1, MAX_PARTS + 1):
-            name = f"M_{kind}_{part}"
+            name = f"{prefix}_{kind}_{part}"
             url = BASE.format(date=date, name=name)
             prev = None if force else files.get(name)
             status, body, meta = fetch(session, url, prev)
@@ -470,7 +492,7 @@ def scrape_date(session, date: str, index: dict, force: bool) -> bool:
     # Re-parse every file for the date (not just the new one) so the date's
     # JSON is always built from one consistent set of PDFs.
     lists, benches = [], []
-    for name in sorted(files, key=lambda n: ([k for k, _ in LIST_KINDS].index(n.split("_")[1]), n)):
+    for name in sorted(files, key=list_order):
         body = fresh.get(name)
         if body is None:
             status, body, meta = fetch(session, BASE.format(date=date, name=name), None)
