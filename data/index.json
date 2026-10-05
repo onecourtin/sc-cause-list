@@ -317,11 +317,18 @@
      "sha": "5f494e9eda841aaf",
      "bytes": 1147729,
      "published": "03-10-2026 13:09:41"
+    },
+    "M_R_1": {
+     "etag": "\"809a3-65d146eaeb0cc\"",
+     "modified": "Mon, 05 Oct 2026 09:23:17 GMT",
+     "sha": "352a90ce6ee300a5",
+     "bytes": 526755,
+     "published": "05-10-2026 14:51:25"
     }
    },
-   "items": 1660,
-   "fetched": "2026-10-03 23:55 IST"
+   "items": 1743,
+   "fetched": "2026-10-05 15:18 IST"
   }
  },
- "updated": "2026-10-05 13:37 IST"
+ "updated": "2026-10-05 15:18 IST"
 }
