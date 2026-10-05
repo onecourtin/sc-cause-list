@@ -1,0 +1,51 @@
+{
+ "date": "2026-10-05",
+ "updated": "2026-10-05 10:30 IST",
+ "courts": {
+  "1": {
+   "msg": "SEQUENCE WOULD BE ITEM NOS 1 TO 30 53 PASS OVER THEN REST OF THE MATTERS",
+   "seen": "10:30",
+   "changed": "10:30"
+  },
+  "2": {
+   "msg": "SEQUENCE 1 TO 32 79 84 PASS OVER IF ANY 33 TO 77 80 TO 83",
+   "seen": "10:30",
+   "changed": "10:30"
+  },
+  "6": {
+   "msg": "SEQUENCE WOULD BE ITEM NOS. 1 TO 39 57 58 60 TO 62 PASSOVER IF ANY THEREAFTER ITEM NOS. 40 TO 56",
+   "seen": "10:30",
+   "changed": "10:30"
+  },
+  "7": {
+   "msg": "sequence item nos. 1 to 40 57 to 64 68 fresh passover 41 to 56 65 67 66",
+   "seen": "10:30",
+   "changed": "10:30"
+  },
+  "8": {
+   "msg": "ITEM NO.67 WILL BE TAKEN UP AS FIRST ITEM AND REST OF THE MATTERS AS PER LIST",
+   "seen": "10:30",
+   "changed": "10:30"
+  },
+  "9": {
+   "msg": "SEQUENCE WOULD BE ITEM NOS.1 TO 11 56 57 60 51 WITH 61 PO IF ANY ITEM NO.12 ONWARDS AS PER CAUSELIST",
+   "seen": "10:30",
+   "changed": "10:30"
+  },
+  "11": {
+   "msg": "Seq.Item Nos.1 to 27 56 58 28 to 55 61 62 and pass over matters",
+   "seen": "10:30",
+   "changed": "10:30"
+  },
+  "13": {
+   "msg": "Todays sequence 1 to 20 57 to 60 passovers 21 to 56 61 62",
+   "seen": "10:30",
+   "changed": "10:30"
+  },
+  "15": {
+   "msg": "Sequence would be as Item Nos. 1 to 28 57 to 61 then rest of matters as per list...",
+   "seen": "10:30",
+   "changed": "10:30"
+  }
+ }
+}

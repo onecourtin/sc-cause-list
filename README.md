@@ -52,6 +52,20 @@ sometimes, so consecutive blocks with the same court + judges + time are merged.
                   ra: resp. advocates, x: [notes/IAs], k: 1 if connected } ] }] }] }
 ```
 
+## Hearing sequences
+
+Most mornings each court posts a sequence on the display board, e.g.
+`SEQUENCE 1 TO 32 79 84 PASS OVER IF ANY 33 TO 77 80 TO 83`. The
+`Save hearing sequences` workflow runs `fetch_sequence.py` every 10 minutes
+from 9:30 AM to 1:20 PM IST and saves the raw text to `data/seq-<date>.json`
+(source: the `court_message` field of the `cdb.sci.gov.in` board feed).
+
+The page parses it (the `oc-sequence` script in `index.html`) and shows the
+court's matters in hearing order, with pass-over points, fixed-time items and
+anything the sequence didn't mention at the end. It covers the court's regular
+sitting (main + supplementary list) plus any other bench whose items it names.
+`node test_sequence.js` checks the parser against real board messages.
+
 ## Running locally
 
 ```bash

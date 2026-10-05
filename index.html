@@ -129,6 +129,28 @@ details.notes li{margin-bottom:4px;}
 .xnotes .mm{color:var(--accent-dark);font-weight:700;}
 mark{background:#ffe08a;color:inherit;padding:0 1px;}
 
+/* ── Hearing sequence ── */
+.seq-banner{padding:12px 18px;border-bottom:1.5px solid var(--line);background:#eef7f1;border-left:4px solid var(--ok);}
+.seq-banner.off{background:#fbfafa;border-left-color:var(--line);}
+.seq-h{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ok);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline;}
+.seq-banner.off .seq-h{color:var(--muted);}
+.seq-h .when{font-weight:600;letter-spacing:.04em;text-transform:none;color:var(--muted);font-size:12px;}
+.seq-msg{margin-top:5px;font-size:13.5px;font-weight:600;line-height:1.5;}
+.seq-actions{margin-top:8px;display:flex;gap:14px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--muted);}
+.seq-toggle{font-family:inherit;font-size:12px;font-weight:700;border:1.5px solid var(--ink);background:#fff;color:var(--ink);padding:4px 10px;cursor:pointer;}
+.seq-toggle:hover{background:var(--ink);color:#fff;}
+.seq-warn{padding:8px 18px;font-size:12px;background:var(--warn-bg);color:var(--warn);border-bottom:1px solid var(--line);}
+.seq-timed{padding:10px 18px;border-bottom:1.5px solid var(--line);background:#fffaf0;}
+.seq-timed .lbl{font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--warn);margin-bottom:4px;}
+.seq-div{padding:8px 18px;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--ok);background:#f4faf6;border-bottom:1px solid var(--line);border-top:1px dashed #9cc9b0;}
+.seq-div.rest{color:var(--muted);background:var(--card-alt);border-top-style:solid;border-top-color:var(--line);}
+.no .seqpos{color:var(--ok);}
+.no .ltag{display:block;font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--warn);margin-top:2px;}
+.pill.has-seq{position:relative;}
+.pill.has-seq::after{content:"";position:absolute;top:2px;right:2px;width:6px;height:6px;border-radius:50%;background:var(--ok);}
+.pill[aria-pressed="true"].has-seq::after{background:#fff;}
+.seq-legend{font-size:11.5px;color:var(--muted);margin-top:8px;display:flex;align-items:center;gap:6px;}
+.seq-legend i{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--ok);}
 .court-link{font-size:11px;font-weight:700;color:var(--accent);text-decoration:none;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;background:none;border:none;font-family:inherit;padding:0;}
 .court-link:hover{text-decoration:underline;}
 
@@ -252,6 +274,133 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
   </div>
 </footer>
 
+<script id="oc-sequence">
+// Reads a court's "sequence" message from the SCI display board and works out
+// the order in which the court will take up its matters.
+//
+// The board text has no punctuation, e.g.
+//   "SEQUENCE 1 TO 32 79 84 PASS OVER IF ANY 33 TO 77 80 TO 83"
+//   "ITEM NO.67 WILL BE TAKEN UP AS FIRST ITEM AND REST OF THE MATTERS AS PER LIST"
+//   "SEQUENCE WOULD BE ITEM NOS.1 TO 11 56 57 60 51 WITH 61 PO IF ANY ITEM NO.12 ONWARDS AS PER CAUSELIST"
+//
+// parseSequence(text) → { steps, timed }   (pure text, no cause-list needed)
+// applySequence(parsed, entries) → { order, missing }
+//
+// Kept in its own <script> so test_sequence.js can load it in Node.
+(function (root) {
+  "use strict";
+
+  var TIME = "\\d{1,2}(?:[.:]\\d{2})?\\s*(?:A\\.?\\s?M\\.?|P\\.?\\s?M\\.?)";
+  // Order matters: longer forms first so "1 TO 30" isn't read as 1 and 30.
+  var TOKENS = [
+    ["date", "\\b\\d{1,2}[./-]\\d{1,2}[./-]\\d{2,4}\\b"],
+    ["timed", "(\\d+)\\s+(?:WILL\\s+BE\\s+TAKEN\\s+UP\\s+|SHALL\\s+BE\\s+TAKEN\\s+UP\\s+)?AT\\s+(" + TIME + ")"],
+    ["time", TIME],
+    ["range", "(\\d+)\\s*(?:TO|-|–)\\s*(\\d+)"],
+    ["with", "(\\d+)\\s+(?:ALONG\\s+)?WITH\\s+(?:ITEM\\s+NOS?\\.?\\s*)?(\\d+)"],
+    ["onwards", "(\\d+)\\s+ONWARDS?"],
+    ["freshpo", "FRESH\\s+PASS\\s*-?\\s*OVERS?|FRESH\\s+P\\.?\\s?O\\b"],
+    ["po", "PASS\\s*-?\\s*OVERS?|PASSED\\s*-?\\s*OVER|\\bP\\.?\\s?O\\b"],
+    ["rest", "\\bREST\\b|\\bREMAINING\\b|AS\\s+PER\\s+(?:THE\\s+)?(?:CAUSE\\s*)?LIST"],
+    ["item", "(\\d+)"]
+  ];
+  var RE = new RegExp(TOKENS.map(function (t) { return "(" + t[1].replace(/\((?!\?)/g, "(?:") + ")"; }).join("|"), "gi");
+  var PARTS = TOKENS.map(function (t) { return new RegExp("^" + t[1] + "$", "i"); });
+
+  function parseSequence(text) {
+    var s = String(text || "").replace(/[,;]/g, " ").replace(/\s+/g, " ");
+    var steps = [], timed = [], m;
+    RE.lastIndex = 0;
+    while ((m = RE.exec(s))) {
+      var k = -1;
+      for (var i = 0; i < TOKENS.length; i++) if (m[i + 1] !== undefined) { k = i; break; }
+      var kind = TOKENS[k][0];
+      var g = m[0].match(PARTS[k]) || [];
+      var last = steps[steps.length - 1];
+      if (kind === "date" || kind === "time") continue;
+      if (kind === "timed") timed.push({ n: +g[1], time: g[2].replace(/\s+/g, " ").toUpperCase() });
+      else if (kind === "range") {
+        var a = +g[1], b = +g[2];
+        // "1 TO 30" — a backwards or absurd range is more likely a typo
+        // ("40 TO 4"); treat the numbers as single items instead.
+        if (b >= a && b - a < 500) steps.push({ k: "range", a: a, b: b });
+        else steps.push({ k: "item", n: a }, { k: "item", n: b });
+      }
+      else if (kind === "with") steps.push({ k: "item", n: +g[1] }, { k: "item", n: +g[2], with: +g[1] });
+      else if (kind === "onwards") steps.push({ k: "onwards", n: +g[1] });
+      else if (kind === "freshpo" || kind === "po") {
+        if (!(last && last.k === "po")) steps.push({ k: "po", fresh: kind === "freshpo" });
+      }
+      else if (kind === "rest") {
+        // "REST OF THE MATTERS AS PER LIST" is one instruction, and
+        // "12 ONWARDS AS PER CAUSELIST" already covers the rest.
+        if (!(last && (last.k === "rest" || last.k === "onwards"))) steps.push({ k: "rest" });
+      }
+      else steps.push({ k: "item", n: +g[1] });
+    }
+    return { steps: steps, timed: timed };
+  }
+
+  // entries: the court's matters in cause-list order, one per item number
+  // (connected matters ride along with their main item):
+  //   [{ num: 12, ... }, ...]
+  // Returns order: [{ entry, pos } | { divider: "po" | "freshpo" | "rest" }]
+  function applySequence(parsed, entries) {
+    var byNum = {}, used = {}, named = {}, order = [], missing = [], pos = 0;
+    entries.forEach(function (e) { if (!(e.num in byNum)) byNum[e.num] = e; });
+
+    // Items the sequence names explicitly (or pins to a time) are never
+    // swept up by a "rest" / "onwards" earlier in the text.
+    parsed.steps.forEach(function (st) {
+      if (st.k === "item") named[st.n] = 1;
+      if (st.k === "range") for (var x = st.a; x <= st.b; x++) named[x] = 1;
+    });
+    parsed.timed.forEach(function (t) { named[t.n] = 1; used[t.n] = 1; });
+
+    function take(n, extra) {
+      var e = byNum[n];
+      if (!e || used[n]) return false;
+      used[n] = 1;
+      order.push(Object.assign({ entry: e, pos: ++pos }, extra || {}));
+      return true;
+    }
+    function sweep(min) {
+      entries.forEach(function (e) {
+        if (e.num >= min && !named[e.num]) take(e.num);
+      });
+    }
+
+    parsed.steps.forEach(function (st) {
+      if (st.k === "item") { if (!take(st.n, st.with ? { with: st.with } : null) && !byNum[st.n]) missing.push(st.n); }
+      else if (st.k === "range") {
+        var hit = false;
+        for (var x = st.a; x <= st.b; x++) hit = take(x) || hit || !!byNum[x];
+        if (!hit) missing.push(st.a + "–" + st.b);
+      }
+      else if (st.k === "onwards") sweep(st.n);
+      else if (st.k === "rest") sweep(-Infinity);
+      else if (st.k === "po") order.push({ divider: st.fresh ? "freshpo" : "po" });
+    });
+
+    var timed = parsed.timed.map(function (t) {
+      if (!byNum[t.n]) missing.push(t.n);
+      return { entry: byNum[t.n] || null, n: t.n, time: t.time };
+    });
+
+    // Anything the sequence didn't mention stays visible, at the end.
+    var left = entries.filter(function (e) { return !used[e.num] && byNum[e.num] === e; });
+    if (left.length) {
+      order.push({ divider: "rest" });
+      left.forEach(function (e) { used[e.num] = 1; order.push({ entry: e, pos: ++pos, unlisted: true }); });
+    }
+    return { order: order, timed: timed, missing: missing };
+  }
+
+  var api = { parseSequence: parseSequence, applySequence: applySequence };
+  if (typeof module !== "undefined" && module.exports) module.exports = api;
+  else root.OCSequence = api;
+})(typeof window !== "undefined" ? window : this);
+</script>
 <script>
 (function () {
   "use strict";
@@ -272,7 +421,7 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
   var MAX_RESULTS = 300;
 
   var $ = function (id) { return document.getElementById(id); };
-  var state = { index: null, date: null, day: null, court: null, q: "" };
+  var state = { index: null, date: null, day: null, court: null, q: "", seq: null, seqOff: false };
   var cache = {};
 
 
@@ -383,12 +532,13 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
     $("pickerGroups").innerHTML = KIND_ORDER.filter(function (k) { return byKind[k]; }).map(function (k) {
       return '<div class="picker-group"><div class="pg-name">' + KIND[k] + '</div><div class="pills">' +
         byKind[k].map(function (c) {
-          return '<button class="pill" type="button" data-court="' + esc(c.key) + '" aria-pressed="' + (c.key === state.court) + '" title="' + esc(courtLong(c.kind, c.court)) + '">' + esc(c.short) + "</button>";
+          var dot = seqFor(c) ? " has-seq" : "";
+          return '<button class="pill' + dot + '" type="button" data-court="' + esc(c.key) + '" aria-pressed="' + (c.key === state.court) + '" title="' + esc(courtLong(c.kind, c.court)) + (dot ? " — hearing sequence posted" : "") + '">' + esc(c.short) + "</button>";
         }).join("") + "</div></div>";
-    }).join("");
+    }).join("") + (courts.some(seqFor) ? '<div class="seq-legend"><i></i>Hearing sequence posted on the display board — matters shown in the order the court will take them up.</div>' : "");
     $("pickerSelect").innerHTML = KIND_ORDER.filter(function (k) { return byKind[k]; }).map(function (k) {
       return '<optgroup label="' + KIND[k] + '">' + byKind[k].map(function (c) {
-        return '<option value="' + esc(c.key) + '"' + (c.key === state.court ? " selected" : "") + ">" + esc(courtLong(c.kind, c.court)) + "</option>";
+        return '<option value="' + esc(c.key) + '"' + (c.key === state.court ? " selected" : "") + ">" + esc(courtLong(c.kind, c.court)) + (seqFor(c) ? " ● sequence" : "") + "</option>";
       }).join("") + "</optgroup>";
     }).join("");
     $("pickerRow").hidden = false;
@@ -484,20 +634,172 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
 
   function sectionTitle(t) { return t.replace(/^\[\s*|\s*\]$/g, "") || "Matters"; }
 
+  // ── Hearing sequence ──────────────────────────────────────────────────
+  // The display-board key for a court: "1" for the CJI's court, "R1" for
+  // Registrar Court 1. Sequences are posted for the miscellaneous list.
+  function boardKey(g) {
+    if (g.kind !== "J" && g.kind !== "R") return null;
+    var c = /CHIEF JUSTICE/i.test(g.court) ? "1" : (g.court.match(/(\d+)\s*$/) || [])[1];
+    return c ? (g.kind === "R" ? "R" + c : c) : null;
+  }
+  function seqFor(g) {
+    var sq = state.seq;
+    if (!sq || sq.date !== state.date) return null;
+    var k = boardKey(g);
+    return k && sq.courts[k] || null;
+  }
+
+  function mainNo(n) { return String(n).split(".")[0]; }
+
+  // Which of the court's bench blocks the sequence covers, and its matters
+  // as one list in cause-list order. Covered: the court's regular sitting
+  // (first block of the main list and of the supplementary list) plus any
+  // other block — a special bench, the regular-hearing list — whose item
+  // numbers the sequence names.
+  function sequenceScope(g, parsed) {
+    var day = state.day;
+    var named = {};
+    parsed.steps.forEach(function (st) {
+      if (st.k === "item") named[st.n] = 1;
+      if (st.k === "range") for (var x = st.a; x <= st.b; x++) named[x] = 1;
+    });
+    parsed.timed.forEach(function (t) { named[t.n] = 1; });
+
+    var pool = g.benches.slice();
+    if (g.kind === "J") {
+      var reg = day.courts.filter(function (c) { return c.key === "FJ:" + g.court; })[0];
+      if (reg) pool = pool.concat(reg.benches);
+    }
+    var firstOfList = {};
+    var inScope = pool.filter(function (bi) {
+      var b = day.benches[bi];
+      var first = !firstOfList[b.list] && b.list.charAt(0) === "M";
+      firstOfList[b.list] = true;
+      if (first) return true;
+      return b.sections.some(function (s) { return s.items.some(function (it) { return named[+mainNo(it.n)]; }); });
+    });
+
+    var entries = [], byNum = {};
+    inScope.forEach(function (bi) {
+      var b = day.benches[bi];
+      b.sections.forEach(function (s) {
+        s.items.forEach(function (it) {
+          var num = +mainNo(it.n);
+          if (String(it.n).indexOf(".") > 0 && byNum[num]) { byNum[num].rows.push(it); return; }
+          var e = { num: num, rows: [it], bench: b };
+          if (!byNum[num]) byNum[num] = e;
+          entries.push(e);
+        });
+      });
+    });
+    return { benches: inScope, entries: entries };
+  }
+
+  function renderSequenced(g, sq) {
+    var day = state.day;
+    var parsed = OCSequence.parseSequence(sq.msg);
+    var scope = sequenceScope(g, parsed);
+    var when = "Posted on the SCI display board at " + esc(fmtTime(sq.seen)) +
+      (sq.changed && sq.changed !== sq.seen ? " · updated " + esc(fmtTime(sq.changed)) : "");
+    var rest = g.benches.filter(function (bi) { return scope.benches.indexOf(bi) < 0; });
+    var first = day.benches[scope.benches[0]];
+
+    var banner = '<div class="seq-banner' + (state.seqOff ? " off" : "") + '">' +
+      '<div class="seq-h"><span>' + (state.seqOff ? "Cause-list order" : "Today’s hearing sequence") + '</span><span class="when">' + when + "</span></div>" +
+      '<div class="seq-msg">“' + esc(sq.msg) + "”</div>" +
+      '<div class="seq-actions"><button class="seq-toggle" type="button" data-seq-toggle>' +
+        (state.seqOff ? "Show in hearing order" : "Show in cause-list order") + "</button>" +
+        (state.seqOff ? "" : "<span>Arranged automatically from the board text — check the board if in doubt.</span>") +
+      "</div></div>";
+
+    if (state.seqOff) {
+      $("out").innerHTML = renderBenches(g.benches, g.kind, banner);
+      return;
+    }
+
+    var r = OCSequence.applySequence(parsed, scope.entries);
+    var html = '<section class="bench">' + benchHeadHTML(first, g.kind) + banner;
+    if (r.missing.length) {
+      html += '<div class="seq-warn">The sequence mentions item' + (r.missing.length > 1 ? "s " : " ") + esc(r.missing.join(", ")) +
+        ", which " + (r.missing.length > 1 ? "aren’t" : "isn’t") + " in this court’s list — probably a slip on the board. Skipped.</div>";
+    }
+    var timed = r.timed.filter(function (t) { return t.entry; });
+    if (timed.length) {
+      html += '<div class="seq-timed"><div class="lbl">Taken up at a fixed time</div>' +
+        timed.map(function (t) { return entryHTML(t.entry, '<span class="ctag">' + esc(t.time) + "</span>"); }).join("") + "</div>";
+    }
+    r.order.forEach(function (o) {
+      if (o.divider === "po") html += '<div class="seq-div">Passed-over matters, if any, are taken up here</div>';
+      else if (o.divider === "freshpo") html += '<div class="seq-div">Passed-over fresh matters are taken up here</div>';
+      else if (o.divider === "rest") html += '<div class="seq-div rest">Not mentioned in the sequence — in cause-list order</div>';
+      else html += entryHTML(o.entry, '<span class="ctag seqpos">' + ordinal(o.pos) + " up</span>" + (o.with ? '<span class="ctag">with item ' + esc(o.with) + "</span>" : ""));
+    });
+    html += "</section>";
+    $("out").innerHTML = html + (rest.length ? renderBenches(rest, g.kind, "") : "");
+  }
+
+  // One matter (with its connected matters) in sequence view. Tags say
+  // which list it came from, since sections are no longer shown.
+  function entryHTML(e, tags) {
+    var b = e.bench;
+    var src = isRegular(b) ? "Regular" : isSupp(b) ? "Suppl." : "";
+    return e.rows.map(function (it, i) {
+      return itemHTML(it, esc, i ? "" : tags + (src ? '<span class="ltag">' + src + "</span>" : ""));
+    }).join("");
+  }
+
+  function ordinal(n) {
+    var s = ["th", "st", "nd", "rd"], v = n % 100;
+    return n + (s[(v - 20) % 10] || s[v] || s[0]);
+  }
+  function fmtTime(hm) {
+    var p = String(hm || "").split(":"), h = +p[0];
+    if (!p[1]) return hm || "";
+    return (h % 12 || 12) + ":" + p[1] + (h < 12 ? " AM" : " PM");
+  }
+
+  function renderBenches(list, kind, bannerForFirst) {
+    var day = state.day;
+    return list.map(function (bi, i) {
+      var b = day.benches[bi];
+      return '<section class="bench">' + benchHeadHTML(b, kind) + (i === 0 ? bannerForFirst : "") +
+        b.sections.map(function (s) {
+          return '<div class="section-title">' + esc(sectionTitle(s.t)) + '<span class="count">' + s.items.length + "</span></div>" +
+            s.items.map(function (it) { return itemHTML(it, esc); }).join("");
+        }).join("") + "</section>";
+    }).join("");
+  }
+
+  function loadSequence(date) {
+    // Sequences only exist for today and past days.
+    if (date > todayIST()) return Promise.resolve(null);
+    return fetch(DATA + "seq-" + date + ".json", { cache: "no-cache" })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .catch(function () { return null; });
+  }
+
+  // While today's list is open in the morning, look for newly posted or
+  // revised sequences every few minutes.
+  setInterval(function () {
+    var hour = new Date(Date.now() + (330 + new Date().getTimezoneOffset()) * 60000).getHours();
+    if (!state.day || state.date !== todayIST() || hour < 9 || hour >= 15 || document.hidden) return;
+    var date = state.date;
+    loadSequence(date).then(function (sq) {
+      if (state.date !== date || JSON.stringify(sq) === JSON.stringify(state.seq)) return;
+      state.seq = sq;
+      renderPicker();
+      render();
+    });
+  }, 3 * 60 * 1000);
+
   function renderCourt() {
     var day = state.day;
     var g = day.courts.filter(function (c) { return c.key === state.court; })[0] || day.courts[0];
     if (!g) { $("out").innerHTML = '<div class="empty"><strong>No courts in this list.</strong></div>'; return; }
     state.court = g.key;
-    var hl = esc;
-    $("out").innerHTML = g.benches.map(function (bi) {
-      var b = day.benches[bi];
-      return '<section class="bench">' + benchHeadHTML(b, g.kind) +
-        b.sections.map(function (s) {
-          return '<div class="section-title">' + esc(sectionTitle(s.t)) + '<span class="count">' + s.items.length + "</span></div>" +
-            s.items.map(function (it) { return itemHTML(it, hl); }).join("");
-        }).join("") + "</section>";
-    }).join("");
+    var sq = seqFor(g);
+    if (sq) { renderSequenced(g, sq); return; }
+    $("out").innerHTML = renderBenches(g.benches, g.kind, "");
   }
 
   function renderSearch() {
@@ -530,6 +832,7 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
   }
 
   $("out").addEventListener("click", function (e) {
+    if (e.target.closest("[data-seq-toggle]")) { state.seqOff = !state.seqOff; render(); return; }
     var b = e.target.closest("[data-open]");
     if (!b) return;
     state.q = ""; $("q").value = ""; $("qclear").hidden = true;
@@ -588,9 +891,11 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
       day.courts = groupCourts(day);
       return day;
     }));
-    p.then(function (day) {
+    Promise.all([p, loadSequence(date)]).then(function (res) {
+      var day = res[0];
       if (state.date !== date) return;
       state.day = day;
+      state.seq = res[1];
       // Keep the same court across dates when it sits that day; otherwise
       // (and on a fresh visit) open the CJI's court.
       var keys = day.courts.map(function (c) { return c.key; });

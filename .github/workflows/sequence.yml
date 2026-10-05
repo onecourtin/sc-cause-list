@@ -1,0 +1,57 @@
+name: Save hearing sequences
+
+on:
+  schedule:
+    # Courts post their sequence on the display board around 10:30 AM IST.
+    # Every 10 min from 9:30 AM to 1:20 PM IST, Mon–Sat. (UTC = IST − 5:30;
+    # GitHub often starts scheduled runs a few minutes late.)
+    - cron: "*/10 4-7 * * 1-6"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sc-sequence
+  cancel-in-progress: false
+
+jobs:
+  sequence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Fetch sequences from the display board
+        run: python fetch_sequence.py
+
+      - name: Commit updated sequences
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add data
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "Update hearing sequences ($(TZ=Asia/Kolkata date '+%Y-%m-%d %H:%M IST'))"
+
+          # The cause-list job pushes to the same branch; rebase and retry.
+          for attempt in 1 2 3; do
+            if git push; then
+              echo "Pushed on attempt $attempt."
+              exit 0
+            fi
+            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
+          done
+          echo "::error::Could not push after 3 attempts."
+          exit 1
