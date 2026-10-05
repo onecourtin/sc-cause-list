@@ -396,7 +396,13 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
     return { order: order, timed: timed, missing: missing };
   }
 
-  var api = { parseSequence: parseSequence, applySequence: applySequence };
+  // A board message is a sequence only if it names matters to take up;
+  // "Special Bench will sit at 1 PM" is just a notice.
+  function isSequence(parsed) {
+    return parsed.steps.some(function (st) { return st.k === "item" || st.k === "range" || st.k === "onwards"; });
+  }
+
+  var api = { parseSequence: parseSequence, applySequence: applySequence, isSequence: isSequence };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.OCSequence = api;
 })(typeof window !== "undefined" ? window : this);
@@ -646,11 +652,19 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
     var c = /CHIEF JUSTICE/i.test(g.court) ? "1" : (g.court.match(/(\d+)\s*$/) || [])[1];
     return c ? (g.kind === "R" ? "R" + c : c) : null;
   }
-  function seqFor(g) {
+  function boardMsg(g) {
     var sq = state.seq;
     if (!sq || sq.date !== state.date) return null;
     var k = boardKey(g);
     return k && sq.courts[k] || null;
+  }
+  function seqFor(g) {
+    var m = boardMsg(g);
+    return m && OCSequence.isSequence(OCSequence.parseSequence(m.msg)) ? m : null;
+  }
+  function noticeFor(g) {
+    var m = boardMsg(g);
+    return m && !seqFor(g) ? m : null;
   }
 
   function mainNo(n) { return String(n).split(".")[0]; }
@@ -832,7 +846,10 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
     state.court = g.key;
     var sq = seqFor(g);
     if (sq) { renderSequenced(g, sq); return; }
-    $("out").innerHTML = renderBenches(g.benches, g.kind, "");
+    var nt = noticeFor(g);
+    var notice = nt ? '<div class="seq-banner off"><div class="seq-h"><span>Display board notice</span><span class="when">' +
+      esc(fmtTime(nt.changed || nt.seen)) + '</span></div><div class="seq-msg">“' + esc(nt.msg) + "”</div></div>" : "";
+    $("out").innerHTML = renderBenches(g.benches, g.kind, notice);
   }
 
   function renderSearch() {

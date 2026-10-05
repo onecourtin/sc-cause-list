@@ -5,7 +5,7 @@ const html = fs.readFileSync(__dirname + "/index.html", "utf8");
 const src = html.match(/<script id="oc-sequence">([\s\S]*?)<\/script>/)[1];
 const module_ = { exports: {} };
 new Function("module", src)(module_);
-const { parseSequence, applySequence } = module_.exports;
+const { parseSequence, applySequence, isSequence } = module_.exports;
 
 // Board messages and the order we expect, as compact runs ("PO" = pass-over
 // point, "FPO" = fresh pass-overs). Items are taken as 1..last unless listed.
@@ -38,6 +38,17 @@ function runs(order) {
 }
 
 let fail = 0;
+// Board notices that aren't sequences must not reorder anything.
+for (const [msg, want] of [
+  ["Special Bench will sit at 1 PM", false],
+  ["SINGLE JUDGE AND CHAMBER MATTERS TO BE TAKEN UP IMMEDIATELY AFTER NORMAL COURT WORK IS OVER", false],
+  ["ITEM NO.67 WILL BE TAKEN UP AS FIRST ITEM AND REST OF THE MATTERS AS PER LIST", true],
+  ["SEQUENCE 1 TO 32 79 84 PASS OVER IF ANY 33 TO 77 80 TO 83", true],
+]) {
+  const got = isSequence(parseSequence(msg));
+  if (got !== want) fail++;
+  console.log(`${got === want ? "ok  " : "FAIL"} ${want ? "sequence" : "notice  "}: ${msg}`);
+}
 for (const [msg, last, want, wantTimed = "", wantMissing = ""] of CASES) {
   const entries = Array.from({ length: last }, (_, i) => ({ num: i + 1 }));
   const r = applySequence(parseSequence(msg), entries);
