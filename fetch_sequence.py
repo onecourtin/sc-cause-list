@@ -7,8 +7,10 @@ Most mornings each court posts a "sequence" on the display board, e.g.
 
 telling the bar the order in which it will take up the matters (usually where
 the supplementary list slots in, and when passed-over matters are called).
-The board's JSON feed carries it as `court_message`. The feed has no CORS
-headers, so this script fetches it on a schedule and writes
+The board's JSON feed carries it as `court_message`. cdb.sci.gov.in doesn't
+answer GitHub's servers, so the script reads it through our Cloudflare Worker
+(worker/sc-board.js), falling back to the board itself (which works from an
+ordinary Indian connection, e.g. a Mac). It writes
 
     data/seq-<YYYY-MM-DD>.json   {date, updated, courts: {"2": {msg, seen, changed}}}
 
@@ -26,6 +28,7 @@ from pathlib import Path
 
 import requests
 
+WORKER = "https://sc-board.onelawstreet.workers.dev/"
 FEED = ("https://cdb.sci.gov.in/index.php?courtListCsv=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,21,22"
         "&request=display_full&requestType=ajax")
 DATA = Path(__file__).resolve().parent / "data"
@@ -40,24 +43,48 @@ def court_key(name: str) -> str | None:
     return (m.group(1) + m.group(2)) if m else None
 
 
-def main():
-    now = dt.datetime.now(IST)
-    r = requests.get(FEED, timeout=60, headers={"User-Agent": "Mozilla/5.0 (compatible; OneCourt cause-list reader; +https://onecourt.in)"})
+UA = {"User-Agent": "Mozilla/5.0 (compatible; OneCourt cause-list reader; +https://onecourt.in)"}
+
+
+def read_board() -> tuple[str | None, dict[str, str]]:
+    """Return (board date, {court key: message}) from the Worker, or from the
+    board directly if the Worker isn't reachable."""
+    try:
+        r = requests.get(WORKER, timeout=40, headers=UA)
+        d = r.json()
+        if "courts" in d:
+            if d.get("stale"):
+                print(f"  (Worker served its last good copy: {d.get('error')})")
+            return d.get("date"), {k: v.get("msg") or "" for k, v in d["courts"].items()}
+        print(f"  Worker error: {d.get('error')}")
+    except (requests.RequestException, ValueError) as e:
+        print(f"  Worker unreachable: {e}")
+    r = requests.get(FEED, timeout=30, headers=UA)
     r.raise_for_status()
     feed = r.json()
+    msgs = {}
+    for c in feed.get("listedItemDetails", []):
+        key = court_key(c.get("court_name", ""))
+        if key:
+            msgs[key] = c.get("court_message") or ""
+    return feed.get("todayB"), msgs
+
+
+def main():
+    now = dt.datetime.now(IST)
+    board_date, messages = read_board()
 
     # The board's own date, so a run just after midnight can't file
     # yesterday's messages under today.
-    date = feed.get("todayB") or now.date().isoformat()
+    date = board_date or now.date().isoformat()
     path = DATA / f"seq-{date}.json"
     old = json.loads(path.read_text()) if path.exists() else {"date": date, "courts": {}}
     courts = old.get("courts", {})
     stamp = now.strftime("%H:%M")
 
     changed = False
-    for c in feed.get("listedItemDetails", []):
-        key = court_key(c.get("court_name", ""))
-        msg = html.unescape(re.sub(r"<[^>]+>", " ", c.get("court_message") or ""))
+    for key, raw in messages.items():
+        msg = html.unescape(re.sub(r"<[^>]+>", " ", raw))
         msg = re.sub(r"\s+", " ", msg).strip()
         if not key or not msg:
             # A message that disappears later in the day is kept: the

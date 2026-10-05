@@ -411,6 +411,10 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
   var DATA = LOCAL ? "data/" : "https://raw.githubusercontent.com/onecourtin/sc-cause-list/main/data/";
 
   // List kinds. An "F" prefix is the regular-hearing version of the same kind.
+  // Live display board (Cloudflare Worker, see worker/sc-board.js) — for
+  // sequences posted since the last saved copy.
+  var BOARD = "https://sc-board.onelawstreet.workers.dev/";
+
   var KIND = {
     J: "Miscellaneous", FJ: "Regular Hearing",
     S: "Single Judge", FS: "Single Judge (Regular)",
@@ -773,9 +777,38 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
   function loadSequence(date) {
     // Sequences only exist for today and past days.
     if (date > todayIST()) return Promise.resolve(null);
-    return fetch(DATA + "seq-" + date + ".json", { cache: "no-cache" })
+    var saved = fetch(DATA + "seq-" + date + ".json", { cache: "no-cache" })
       .then(function (r) { return r.ok ? r.json() : null; })
       .catch(function () { return null; });
+    if (date !== todayIST()) return saved;
+    return Promise.all([saved, loadBoard()]).then(function (res) { return mergeBoard(date, res[0], res[1]); });
+  }
+
+  function loadBoard() {
+    var ctl = typeof AbortController === "function" ? new AbortController() : null;
+    var timer = ctl && setTimeout(function () { ctl.abort(); }, 25000);
+    return fetch(BOARD, { cache: "no-store", signal: ctl && ctl.signal })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .catch(function () { return null; })
+      .then(function (d) { clearTimeout(timer); return d; });
+  }
+
+  // Add messages on the live board that the saved copy doesn't have yet (or
+  // that a court has since changed). Times are when this page first saw them.
+  function mergeBoard(date, saved, board) {
+    if (!board || !board.courts || (board.date && board.date !== date)) return saved;
+    var out = { date: date, updated: saved && saved.updated, courts: {} };
+    var have = saved ? saved.courts : {};
+    Object.keys(have).forEach(function (k) { out.courts[k] = have[k]; });
+    var nowHM = new Date(Date.now() + (330 + new Date().getTimezoneOffset()) * 60000).toTimeString().slice(0, 5);
+    Object.keys(board.courts).forEach(function (k) {
+      var msg = String(board.courts[k].msg || "").replace(/\s+/g, " ").trim();
+      if (!msg || (have[k] && have[k].msg === msg)) return;
+      var prev = state.seq && state.seq.courts[k];
+      out.courts[k] = prev && prev.msg === msg ? prev
+        : { msg: msg, seen: have[k] ? have[k].seen : nowHM, changed: nowHM };
+    });
+    return Object.keys(out.courts).length ? out : null;
   }
 
   // While today's list is open in the morning, look for newly posted or
