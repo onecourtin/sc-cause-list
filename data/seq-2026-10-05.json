@@ -1,6 +1,6 @@
 {
  "date": "2026-10-05",
- "updated": "2026-10-05 10:30 IST",
+ "updated": "2026-10-05 11:19 IST",
  "courts": {
   "1": {
    "msg": "SEQUENCE WOULD BE ITEM NOS 1 TO 30 53 PASS OVER THEN REST OF THE MATTERS",
@@ -11,6 +11,11 @@
    "msg": "SEQUENCE 1 TO 32 79 84 PASS OVER IF ANY 33 TO 77 80 TO 83",
    "seen": "10:30",
    "changed": "10:30"
+  },
+  "4": {
+   "msg": "Special Bench will sit at 1 PM",
+   "seen": "11:19",
+   "changed": "11:19"
   },
   "6": {
    "msg": "SEQUENCE WOULD BE ITEM NOS. 1 TO 39 57 58 60 TO 62 PASSOVER IF ANY THEREAFTER ITEM NOS. 40 TO 56",
@@ -41,6 +46,11 @@
    "msg": "Todays sequence 1 to 20 57 to 60 passovers 21 to 56 61 62",
    "seen": "10:30",
    "changed": "10:30"
+  },
+  "14": {
+   "msg": "SINGLE JUDGE AND CHAMBER MATTERS TO BE TAKEN UP IMMEDIATELY AFTER NORMAL COURT WORK IS OVER",
+   "seen": "11:19",
+   "changed": "11:19"
   },
   "15": {
    "msg": "Sequence would be as Item Nos. 1 to 28 57 to 61 then rest of matters as per list...",

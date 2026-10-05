@@ -61,7 +61,7 @@ Most mornings each court posts a sequence on the display board, e.g.
 
 The board doesn't answer GitHub's or Hostinger's servers, but it does answer
 Cloudflare, so it's read through a Cloudflare Worker (`worker/sc-board.js`,
-deployed as `sc-board.onelawstreet.workers.dev`), which adds CORS and a
+deployed as `sc-board.onecourtin.workers.dev`), which adds CORS and a
 20-second cache. The `Save hearing sequences` workflow runs
 `fetch_sequence.py` every 10 minutes from 9:30 AM to 1:20 PM IST via the
 Worker; the page also asks the Worker directly for today's messages, so a new

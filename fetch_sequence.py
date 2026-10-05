@@ -28,7 +28,7 @@ from pathlib import Path
 
 import requests
 
-WORKER = "https://sc-board.onelawstreet.workers.dev/"
+WORKER = "https://sc-board.onecourtin.workers.dev/"
 FEED = ("https://cdb.sci.gov.in/index.php?courtListCsv=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,21,22"
         "&request=display_full&requestType=ajax")
 DATA = Path(__file__).resolve().parent / "data"
