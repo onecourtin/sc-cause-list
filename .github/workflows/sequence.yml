@@ -1,12 +1,10 @@
 name: Save hearing sequences
 
 on:
-  schedule:
-    # Courts post their sequence on the display board around 10:30 AM IST.
-    # Every 10 min from 9:30 AM to 1:20 PM IST, Mon–Sat. (UTC = IST − 5:30;
-    # GitHub often starts scheduled runs a few minutes late.) The board is
-    # read through the sc-board Cloudflare Worker — GitHub can't reach it.
-    - cron: "*/10 4-7 * * 1-6"
+  # Manual only. GitHub's runners are in the US: their requests reach the
+  # sc-board Worker at a US Cloudflare location, and SCI doesn't answer from
+  # there. The page reads the Worker live instead (visitors in India hit the
+  # Mumbai location, which works); the Mac's Desktop button saves copies.
   workflow_dispatch:
 
 permissions:

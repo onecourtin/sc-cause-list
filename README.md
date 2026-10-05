@@ -59,16 +59,18 @@ Most mornings each court posts a sequence on the display board, e.g.
 `fetch_sequence.py` saves the raw text to `data/seq-<date>.json` (source: the
 `court_message` field of the `cdb.sci.gov.in` board feed).
 
-The board doesn't answer GitHub's or Hostinger's servers, but it does answer
-Cloudflare, so it's read through a Cloudflare Worker (`worker/sc-board.js`,
-deployed as `sc-board.onecourtin.workers.dev`), which adds CORS and a
-20-second cache. The `Save hearing sequences` workflow runs
-`fetch_sequence.py` every 10 minutes from 9:30 AM to 1:20 PM IST via the
-Worker; the page also asks the Worker directly for today's messages, so a new
-or changed sequence shows within ~3 minutes. If the Worker is down,
-`fetch_sequence.py` falls back to the board itself, which works from an
-ordinary connection — `~/Desktop/Update SC sequences.command` does that from
-the Mac as a manual backup.
+The board doesn't answer GitHub's or Hostinger's servers. It does answer
+Cloudflare from its Mumbai location (slowly — often 15+ s), so it's read
+through a Cloudflare Worker (`worker/sc-board.js`, deployed as
+`sc-board.onecourtin.workers.dev`). The Worker adds CORS, answers instantly
+with its latest copy and refreshes from SCI in the background.
+
+The page asks the Worker for today's messages (and every 3 minutes in the
+morning), so visitors see a new or changed sequence within minutes. Saved
+copies (`data/seq-<date>.json`, used for past days and as a base for today)
+come from `~/Desktop/Update SC sequences.command` on the Mac. The GitHub
+`Save hearing sequences` workflow is manual-only: from GitHub's US runners the
+Worker runs at a US location, where SCI doesn't answer.
 
 The page parses it (the `oc-sequence` script in `index.html`) and shows the
 court's matters in hearing order, with pass-over points, fixed-time items and

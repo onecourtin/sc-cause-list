@@ -10,8 +10,11 @@
 //                        "R1": { ... } } }
 //
 // `msg` is the court's message line — most mornings the hearing sequence.
-// If SCI is slow or down, the last good copy (up to an hour old) is returned
-// with "stale": true.
+//
+// SCI often takes 15+ seconds to answer Cloudflare, so the Worker answers at
+// once with its latest copy and refreshes from SCI in the background. A copy
+// older than 20 seconds is marked "stale": true (with "age" in seconds); only
+// the very first request at a location waits for SCI.
 //
 // Deploy: Cloudflare dashboard → Workers & Pages → Create → Worker, name it
 // "sc-board", Deploy, then Edit code → paste this file → Deploy.
@@ -49,7 +52,7 @@ async function fetchBoard() {
       "Accept": "application/json",
       "User-Agent": "Mozilla/5.0 (compatible; OneCourt display-board reader; +https://onecourt.in)",
     },
-    signal: AbortSignal.timeout(15000),
+    signal: AbortSignal.timeout(25000),
   });
   if (!r.ok) throw new Error("SCI returned HTTP " + r.status);
   const d = await r.json();
@@ -71,6 +74,15 @@ async function fetchBoard() {
   return { updated: new Date().toISOString(), date: d.todayB || null, courts };
 }
 
+async function refresh(cache) {
+  const body = JSON.stringify(await fetchBoard());
+  await Promise.all([
+    cache.put(FRESH, new Response(body, { headers: { "Cache-Control": "max-age=20" } })),
+    cache.put(LAST_GOOD, new Response(body, { headers: { "Cache-Control": "max-age=43200" } })),
+  ]);
+  return body;
+}
+
 export default {
   async fetch(request, env, ctx) {
     if (request.method === "OPTIONS") return new Response(null, { headers: HEADERS });
@@ -79,21 +91,19 @@ export default {
     const fresh = await cache.match(FRESH);
     if (fresh) return new Response(fresh.body, { headers: HEADERS });
 
+    // Answer with the last good copy straight away; fetch a new one behind it.
+    const last = await cache.match(LAST_GOOD);
+    if (last) {
+      const data = await last.json();
+      ctx.waitUntil(refresh(cache).catch(() => {}));
+      data.stale = true;
+      data.age = Math.round((Date.now() - Date.parse(data.updated)) / 1000);
+      return new Response(JSON.stringify(data), { headers: HEADERS });
+    }
+
     try {
-      const body = JSON.stringify(await fetchBoard());
-      ctx.waitUntil(Promise.all([
-        cache.put(FRESH, new Response(body, { headers: { "Cache-Control": "max-age=20" } })),
-        cache.put(LAST_GOOD, new Response(body, { headers: { "Cache-Control": "max-age=3600" } })),
-      ]));
-      return new Response(body, { headers: HEADERS });
+      return new Response(await refresh(cache), { headers: HEADERS });
     } catch (err) {
-      const last = await cache.match(LAST_GOOD);
-      if (last) {
-        const data = await last.json();
-        data.stale = true;
-        data.error = String(err.message || err);
-        return new Response(JSON.stringify(data), { headers: HEADERS });
-      }
       return new Response(JSON.stringify({ error: String(err.message || err) }), { status: 502, headers: HEADERS });
     }
   },
