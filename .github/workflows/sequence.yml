@@ -1,11 +1,10 @@
 name: Save hearing sequences
 
 on:
-  schedule:
-    # Courts post their sequence on the display board around 10:30 AM IST.
-    # Every 10 min from 9:30 AM to 1:20 PM IST, Mon–Sat. (UTC = IST − 5:30;
-    # GitHub often starts scheduled runs a few minutes late.)
-    - cron: "*/10 4-7 * * 1-6"
+  # The SCI display board (cdb.sci.gov.in) doesn't answer GitHub's servers,
+  # so sequences are fetched from Mohit's Mac instead ("Update SC
+  # sequences.command" on the Desktop). Kept for manual runs in case that
+  # changes.
   workflow_dispatch:
 
 permissions:

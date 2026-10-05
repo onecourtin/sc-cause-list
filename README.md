@@ -55,10 +55,14 @@ sometimes, so consecutive blocks with the same court + judges + time are merged.
 ## Hearing sequences
 
 Most mornings each court posts a sequence on the display board, e.g.
-`SEQUENCE 1 TO 32 79 84 PASS OVER IF ANY 33 TO 77 80 TO 83`. The
-`Save hearing sequences` workflow runs `fetch_sequence.py` every 10 minutes
-from 9:30 AM to 1:20 PM IST and saves the raw text to `data/seq-<date>.json`
-(source: the `court_message` field of the `cdb.sci.gov.in` board feed).
+`SEQUENCE 1 TO 32 79 84 PASS OVER IF ANY 33 TO 77 80 TO 83`.
+`fetch_sequence.py` saves the raw text to `data/seq-<date>.json` (source: the
+`court_message` field of the `cdb.sci.gov.in` board feed).
+
+The board doesn't answer data-centre IPs (GitHub, Hostinger and Cloudflare all
+time out), so it's run from a Mac on an ordinary connection: double-click
+`~/Desktop/Update SC sequences.command` after ~10:30 AM. It fetches, commits
+and pushes; the page picks it up within ~5 minutes.
 
 The page parses it (the `oc-sequence` script in `index.html`) and shows the
 court's matters in hearing order, with pass-over points, fixed-time items and
