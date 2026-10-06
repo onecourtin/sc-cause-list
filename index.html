@@ -173,7 +173,16 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
   .item .parties,.item .advs,.item .xnotes{grid-column:2;}
   .xnotes{margin-top:2px;}
 }
+.more-row{display:none;}
 @media(max-width:760px){
+  .more-row{display:flex;grid-column:2;align-items:center;gap:8px;flex-wrap:wrap;margin-top:2px;}
+  .more{font-family:inherit;font-size:12px;font-weight:700;color:var(--muted);background:var(--panel);border:1.5px solid var(--line);padding:4px 10px;cursor:pointer;}
+  .more .car{display:inline-block;transition:transform .15s;}
+  .item.open .more .car{transform:rotate(180deg);}
+  .memo-tag{font-size:11px;font-weight:700;color:var(--accent-dark);}
+  .item .advs,.item .xnotes{display:none;}
+  .item.open .advs{display:block;}
+  .item.open .xnotes{display:flex;}
   .site-header .inner{flex-wrap:wrap;height:auto;row-gap:8px;padding-top:10px;padding-bottom:10px;}
   .oc-navlink{display:none;}
   .app{padding:22px 16px 48px;}
@@ -620,12 +629,40 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
       '<div class="case">' + hl(it.c) + (it.s ? '<br><span class="sec">' + esc(it.s) + "</span>" : "") + "</div>" +
       '<div class="parties"><div class="pty">' + hl(it.p) + "</div>" +
         (it.r ? '<div class="vs">versus</div><div class="pty">' + hl(it.r) + "</div>" : "") + "</div>" +
+      moreHTML(it) +
       '<div class="advs">' +
         (it.pa ? '<div class="pa"><span class="lbl">For petitioner</span>' + hl(it.pa) + "</div>" : "") +
         (it.ra ? '<div class="ra"><span class="lbl">For respondent</span>' + hl(it.ra) + "</div>" : "") +
       "</div>" +
       (notes ? '<div class="xnotes">' + notes + "</div>" : "") +
       "</div>";
+  }
+
+  // On phones the advocates and IAs fold away behind this button (CSS hides
+  // it on wider screens, where they sit in their own column).
+  function moreHTML(it) {
+    var ias = (it.x || []).filter(function (x) { return /^I\.?A\.? No/i.test(x); }).length;
+    var others = (it.x || []).length - ias;
+    var parts = [];
+    if (it.pa || it.ra) parts.push("Advocates");
+    if (ias) parts.push(ias + " IA" + (ias > 1 ? "s" : ""));
+    else if (others) parts.push("Notes");
+    if (!parts.length) return "";
+    var memo = (it.x || []).some(function (x) { return /mention memo/i.test(x); });
+    return '<div class="more-row"><button class="more" type="button" aria-expanded="false">' + parts.join(" · ") +
+      ' <span class="car">▾</span></button>' + (memo ? '<span class="memo-tag">Mention memo</span>' : "") + "</div>";
+  }
+
+  // Open any folded matter whose hidden part holds a search match.
+  function openMatches(root) {
+    var items = root.querySelectorAll(".item");
+    for (var i = 0; i < items.length; i++) {
+      if (items[i].querySelector(".advs mark, .xnotes mark")) {
+        items[i].classList.add("open");
+        var b = items[i].querySelector(".more");
+        if (b) b.setAttribute("aria-expanded", "true");
+      }
+    }
   }
 
   function benchHeadHTML(b, kind) {
@@ -791,11 +828,23 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
   function loadSequence(date) {
     // Sequences only exist for today and past days.
     if (date > todayIST()) return Promise.resolve(null);
-    var saved = fetch(DATA + "seq-" + date + ".json", { cache: "no-cache" })
+    return fetch(DATA + "seq-" + date + ".json", { cache: "no-cache" })
       .then(function (r) { return r.ok ? r.json() : null; })
       .catch(function () { return null; });
-    if (date !== todayIST()) return saved;
-    return Promise.all([saved, loadBoard()]).then(function (res) { return mergeBoard(date, res[0], res[1]); });
+  }
+
+  // For today, also ask the live board (which can take a while when SCI is
+  // slow) and re-render only if it brings something new.
+  function refreshLive(date, saved) {
+    if (date !== todayIST()) return;
+    loadBoard().then(function (board) {
+      if (state.date !== date) return;
+      var merged = mergeBoard(date, saved, board);
+      if (JSON.stringify(merged) === JSON.stringify(state.seq)) return;
+      state.seq = merged;
+      renderPicker();
+      render();
+    });
   }
 
   function loadBoard() {
@@ -831,12 +880,7 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
     var hour = new Date(Date.now() + (330 + new Date().getTimezoneOffset()) * 60000).getHours();
     if (!state.day || state.date !== todayIST() || hour < 9 || hour >= 15 || document.hidden) return;
     var date = state.date;
-    loadSequence(date).then(function (sq) {
-      if (state.date !== date || JSON.stringify(sq) === JSON.stringify(state.seq)) return;
-      state.seq = sq;
-      renderPicker();
-      render();
-    });
+    loadSequence(date).then(function (saved) { refreshLive(date, saved); });
   }, 3 * 60 * 1000);
 
   function renderCourt() {
@@ -878,11 +922,18 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
     });
     html += "</section>";
     var more = hits.length > MAX_RESULTS ? " Showing the first " + MAX_RESULTS + " — add another word to narrow it down." : "";
+    setTimeout(function () { openMatches($("out")); }, 0);
     $("out").innerHTML = '<p class="hint" style="margin:0 0 10px;">' + hits.length + " match" + (hits.length === 1 ? "" : "es") + " on " + esc(longDate(state.date)) + "." + more + "</p>" + html;
   }
 
   $("out").addEventListener("click", function (e) {
     if (e.target.closest("[data-seq-toggle]")) { state.seqOff = !state.seqOff; render(); return; }
+    var more = e.target.closest(".more");
+    if (more) {
+      var open = more.closest(".item").classList.toggle("open");
+      more.setAttribute("aria-expanded", String(open));
+      return;
+    }
     var b = e.target.closest("[data-open]");
     if (!b) return;
     state.q = ""; $("q").value = ""; $("qclear").hidden = true;
@@ -946,6 +997,7 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
       if (state.date !== date) return;
       state.day = day;
       state.seq = res[1];
+      refreshLive(date, res[1]);
       // Keep the same court across dates when it sits that day; otherwise
       // (and on a fresh visit) open the CJI's court.
       var keys = day.courts.map(function (c) { return c.key; });
