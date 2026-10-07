@@ -146,6 +146,7 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
 .seq-div.rest{color:var(--muted);background:var(--card-alt);border-top-style:solid;border-top-color:var(--line);}
 .no .seqpos{color:var(--ok);}
 .no .ltag{display:block;font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--warn);margin-top:2px;}
+.pill.is-off{opacity:.45;}
 .pill.has-seq{position:relative;}
 .pill.has-seq::after{content:"";position:absolute;top:2px;right:2px;width:6px;height:6px;border-radius:50%;background:var(--ok);}
 .pill[aria-pressed="true"].has-seq::after{background:#fff;}
@@ -440,7 +441,7 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
   var MAX_RESULTS = 300;
 
   var $ = function (id) { return document.getElementById(id); };
-  var state = { index: null, date: null, day: null, court: null, q: "", seq: null, seqOff: false };
+  var state = { index: null, date: null, day: null, court: null, q: "", seq: null, seqOff: false, board: null, forceSeq: false };
   var cache = {};
 
 
@@ -551,8 +552,8 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
     $("pickerGroups").innerHTML = KIND_ORDER.filter(function (k) { return byKind[k]; }).map(function (k) {
       return '<div class="picker-group"><div class="pg-name">' + KIND[k] + '</div><div class="pills">' +
         byKind[k].map(function (c) {
-          var dot = seqFor(c) ? " has-seq" : "";
-          return '<button class="pill' + dot + '" type="button" data-court="' + esc(c.key) + '" aria-pressed="' + (c.key === state.court) + '" title="' + esc(courtLong(c.kind, c.court)) + (dot ? " — hearing sequence posted" : "") + '">' + esc(c.short) + "</button>";
+          var dot = (seqFor(c) ? " has-seq" : "") + (offFor(c) ? " is-off" : "");
+          return '<button class="pill' + dot + '" type="button" data-court="' + esc(c.key) + '" aria-pressed="' + (c.key === state.court) + '" title="' + esc(courtLong(c.kind, c.court)) + (seqFor(c) ? " — hearing sequence posted" : "") + (offFor(c) ? " — likely not in session" : "") + '">' + esc(c.short) + "</button>";
         }).join("") + "</div></div>";
     }).join("") + (courts.some(seqFor) ? '<div class="seq-legend"><i></i>Hearing sequence posted on the display board — matters shown in the order the court will take them up.</div>' : "");
     $("pickerSelect").innerHTML = KIND_ORDER.filter(function (k) { return byKind[k]; }).map(function (k) {
@@ -684,10 +685,27 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
   // ── Hearing sequence ──────────────────────────────────────────────────
   // The display-board key for a court: "1" for the CJI's court, "R1" for
   // Registrar Court 1. Sequences are posted for the miscellaneous list.
-  function boardKey(g) {
-    if (g.kind !== "J" && g.kind !== "R") return null;
+  // Courts the live board shows as "Not in Session", during court hours only
+  // (before ~10:30 every court reads that way, so it means nothing then).
+  function offFor(g) {
+    var b = state.board;
+    if (!b || state.date !== todayIST()) return false;
+    var now = new Date(Date.now() + (330 + new Date().getTimezoneOffset()) * 60000);
+    var hm = now.getHours() * 100 + now.getMinutes();
+    if (hm < 1045 || hm > 1700) return false;
+    var k = boardKey(g, true);
+    return !!(k && b.courts[k] && b.courts[k].off);
+  }
+  function offKeys() {
+    if (!state.board) return "";
+    return Object.keys(state.board.courts).filter(function (k) { return state.board.courts[k].off; }).join(",");
+  }
+
+  function boardKey(g, anyList) {
+    var kind = anyList ? g.kind.replace(/^F/, "") : g.kind;
+    if (kind !== "J" && kind !== "R") return null;
     var c = /CHIEF JUSTICE/i.test(g.court) ? "1" : (g.court.match(/(\d+)\s*$/) || [])[1];
-    return c ? (g.kind === "R" ? "R" + c : c) : null;
+    return c ? (kind === "R" ? "R" + c : c) : null;
   }
   function boardMsg(g) {
     var sq = state.seq;
@@ -840,7 +858,12 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
     loadBoard().then(function (board) {
       if (state.date !== date) return;
       var merged = mergeBoard(date, saved, board);
-      if (JSON.stringify(merged) === JSON.stringify(state.seq)) return;
+      var offBefore = offKeys();
+      // Session status is only trusted from a reading under 5 minutes old.
+      if (board && board.courts && (!board.date || board.date === date)) {
+        state.board = (board.stale && board.age > 300) ? null : { courts: board.courts, at: board.updated };
+      }
+      if (JSON.stringify(merged) === JSON.stringify(state.seq) && offKeys() === offBefore) return;
       state.seq = merged;
       renderPicker();
       render();
@@ -878,7 +901,7 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
   // revised sequences every few minutes.
   setInterval(function () {
     var hour = new Date(Date.now() + (330 + new Date().getTimezoneOffset()) * 60000).getHours();
-    if (!state.day || state.date !== todayIST() || hour < 9 || hour >= 15 || document.hidden) return;
+    if (!state.day || state.date !== todayIST() || hour < 9 || hour >= 17 || document.hidden) return;
     var date = state.date;
     loadSequence(date).then(function (saved) { refreshLive(date, saved); });
   }, 3 * 60 * 1000);
@@ -889,6 +912,16 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
     if (!g) { $("out").innerHTML = '<div class="empty"><strong>No courts in this list.</strong></div>'; return; }
     state.court = g.key;
     var sq = seqFor(g);
+    if (offFor(g) && !(sq && state.forceSeq)) {
+      var when = state.board.at ? new Date(state.board.at).toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit", timeZone: "Asia/Kolkata" }) : "";
+      var off = '<div class="seq-banner off"><div class="seq-h"><span>Court likely not in session</span><span class="when">' +
+        (when ? "Display board checked " + esc(when) : "") + "</span></div>" +
+        '<div class="seq-msg" style="font-weight:500">The SCI display board shows this court as not in session, so matters are shown in cause-list order.</div>' +
+        (sq ? '<div class="seq-actions"><button class="seq-toggle" type="button" data-force-seq>Show today’s hearing sequence anyway</button></div>' : "") +
+        "</div>";
+      $("out").innerHTML = renderBenches(g.benches, g.kind, off);
+      return;
+    }
     if (sq) { renderSequenced(g, sq); return; }
     var nt = noticeFor(g);
     var notice = nt ? '<div class="seq-banner off"><div class="seq-h"><span>Display board notice</span><span class="when">' +
@@ -928,6 +961,7 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
 
   $("out").addEventListener("click", function (e) {
     if (e.target.closest("[data-seq-toggle]")) { state.seqOff = !state.seqOff; render(); return; }
+    if (e.target.closest("[data-force-seq]")) { state.forceSeq = true; state.seqOff = false; render(); return; }
     var more = e.target.closest(".more");
     if (more) {
       var open = more.closest(".item").classList.toggle("open");

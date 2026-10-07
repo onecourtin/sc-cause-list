@@ -6,10 +6,12 @@
 // board, keeps a copy for 20 seconds (so many visitors make one request), and
 // returns
 //
-//   { updated, courts: { "2": { item: "14", sitting: true, msg: "SEQUENCE 1 TO 32 ..." },
+//   { updated, courts: { "2": { item: "14", sitting: true, off: false, msg: "SEQUENCE 1 TO 32 ..." },
 //                        "R1": { ... } } }
 //
 // `msg` is the court's message line — most mornings the hearing sequence.
+// `off` is true when the board says "Not in Session" (a blank item alone is
+// normal just before a court starts, so `sitting: false` doesn't mean off).
 //
 // SCI often takes 15+ seconds to answer Cloudflare, so the Worker answers at
 // once with its latest copy and refreshes from SCI in the background. A copy
@@ -68,6 +70,7 @@ async function fetchBoard() {
     courts[key] = {
       item: sitting ? clean(rawItem) : null,
       sitting,
+      off: /not in session/i.test(reg),
       msg: clean(row.court_message),
     };
   }
