@@ -37,6 +37,19 @@ function runs(order) {
   return out.join(" ");
 }
 
+function runs(order) {
+  const out = []; let run = null;
+  const flush = () => { if (run) { out.push(run[0] === run[1] ? `${run[0]}` : `${run[0]}-${run[1]}`); run = null; } };
+  for (const o of order) {
+    if (o.divider) { flush(); out.push({ po: "PO", freshpo: "FPO", rest: "|" }[o.divider]); continue; }
+    const n = o.entry.num;
+    if (run && n === run[1] + 1) run[1] = n; else { flush(); run = [n, n]; }
+  }
+  flush();
+  return out.join(" ");
+}
+
+// Board notices that aren't sequences must not reorder anything.
 let fail = 0;
 // Board notices that aren't sequences must not reorder anything.
 for (const [msg, want] of [
@@ -44,8 +57,15 @@ for (const [msg, want] of [
   ["SINGLE JUDGE AND CHAMBER MATTERS TO BE TAKEN UP IMMEDIATELY AFTER NORMAL COURT WORK IS OVER", false],
   ["ITEM NO.67 WILL BE TAKEN UP AS FIRST ITEM AND REST OF THE MATTERS AS PER LIST", true],
   ["SEQUENCE 1 TO 32 79 84 PASS OVER IF ANY 33 TO 77 80 TO 83", true],
+  ["SPECIAL BENCH AT 2 P.M. REST OF THE BOARD IS DISCHARGED", false],
+  ["ITEM NOS. 301 TO 306 WILL BE TAKEN UP IN SPECIAL BENCH AT 2 PM", false],
+  ["except item no. 101 rest of the board is discharged for the day", false],
+  ["EXCEPT ITEM NO.38 AND P20 REST OF BOARD IS DISCHARGED FOR THE DAY", false],
+  ["Kamal Mohan Gupta is required to appear in item no.102", false],
+  ["Seq.at 2 p.m. Item Nos.13 to 28 31 and 101 to 120", true],
+  ...CASES.map(c => [c[0], true]),
 ]) {
-  const got = isSequence(parseSequence(msg));
+  const got = isSequence(parseSequence(msg), msg);
   if (got !== want) fail++;
   console.log(`${got === want ? "ok  " : "FAIL"} ${want ? "sequence" : "notice  "}: ${msg}`);
 }

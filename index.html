@@ -408,7 +408,11 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
 
   // A board message is a sequence only if it names matters to take up;
   // "Special Bench will sit at 1 PM" is just a notice.
-  function isSequence(parsed) {
+  // It must also say so: "EXCEPT ITEM NO.38 … REST OF BOARD IS DISCHARGED"
+  // or "X is required to appear in item no.102" name items but aren't one.
+  function isSequence(parsed, text) {
+    var t = String(text || "");
+    if (text !== undefined && (!/\bSEQ(UENCE)?\b|PASS\s*-?\s*OVER|\bFIRST\b/i.test(t) || /DISCHARG|REQUIRED|APPEAR/i.test(t))) return false;
     return parsed.steps.some(function (st) { return st.k === "item" || st.k === "range" || st.k === "onwards"; });
   }
 
@@ -715,7 +719,7 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
   }
   function seqFor(g) {
     var m = boardMsg(g);
-    return m && OCSequence.isSequence(OCSequence.parseSequence(m.msg)) ? m : null;
+    return m && OCSequence.isSequence(OCSequence.parseSequence(m.msg), m.msg) ? m : null;
   }
   function noticeFor(g) {
     var m = boardMsg(g);
