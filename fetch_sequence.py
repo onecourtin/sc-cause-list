@@ -7,10 +7,10 @@ Most mornings each court posts a "sequence" on the display board, e.g.
 
 telling the bar the order in which it will take up the matters (usually where
 the supplementary list slots in, and when passed-over matters are called).
-The board's JSON feed carries it as `court_message`. cdb.sci.gov.in doesn't
-answer GitHub's servers, so the script reads it through our Cloudflare Worker
-(worker/sc-board.js), falling back to the board itself (which works from an
-ordinary Indian connection, e.g. a Mac). It writes
+The board's JSON feed carries it as `court_message`. It reads the board directly
+(works from an ordinary Indian connection, e.g. the Mac's background job) and
+falls back to our Cloudflare Worker (worker/sc-board.js) for servers SCI won't
+answer. It writes
 
     data/seq-<YYYY-MM-DD>.json   {date, updated, courts: {"2": {msg, seen, changed}}}
 
@@ -47,27 +47,28 @@ UA = {"User-Agent": "Mozilla/5.0 (compatible; OneCourt cause-list reader; +https
 
 
 def read_board() -> tuple[str | None, dict[str, str]]:
-    """Return (board date, {court key: message}) from the Worker, or from the
-    board directly if the Worker isn't reachable."""
+    """Return (board date, {court key: message}). Tries the board directly
+    first (quick from an ordinary Indian connection such as the Mac), then
+    the Worker (for servers SCI won't answer)."""
     try:
-        r = requests.get(WORKER, timeout=40, headers=UA)
-        d = r.json()
-        if "courts" in d:
-            if d.get("stale"):
-                print(f"  (Worker served its last good copy: {d.get('error')})")
-            return d.get("date"), {k: v.get("msg") or "" for k, v in d["courts"].items()}
-        print(f"  Worker error: {d.get('error')}")
+        r = requests.get(FEED, timeout=10, headers=UA)
+        r.raise_for_status()
+        feed = r.json()
+        msgs = {}
+        for c in feed.get("listedItemDetails", []):
+            key = court_key(c.get("court_name", ""))
+            if key:
+                msgs[key] = c.get("court_message") or ""
+        return feed.get("todayB"), msgs
     except (requests.RequestException, ValueError) as e:
-        print(f"  Worker unreachable: {e}")
-    r = requests.get(FEED, timeout=30, headers=UA)
-    r.raise_for_status()
-    feed = r.json()
-    msgs = {}
-    for c in feed.get("listedItemDetails", []):
-        key = court_key(c.get("court_name", ""))
-        if key:
-            msgs[key] = c.get("court_message") or ""
-    return feed.get("todayB"), msgs
+        print(f"  Board not reachable directly ({type(e).__name__}); trying the Worker")
+    r = requests.get(WORKER, timeout=40, headers=UA)
+    d = r.json()
+    if "courts" not in d:
+        raise requests.RequestException(f"Worker: {d.get('error')}")
+    if d.get("stale"):
+        print(f"  (Worker served a copy {d.get('age')} s old)")
+    return d.get("date"), {k: v.get("msg") or "" for k, v in d["courts"].items()}
 
 
 def main():
