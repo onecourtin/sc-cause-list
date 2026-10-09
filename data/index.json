@@ -502,11 +502,18 @@
      "sha": "eee4f031b2a8bf08",
      "bytes": 715479,
      "published": "09-10-2026 19:43:12"
+    },
+    "M_J_1": {
+     "etag": "\"1300ad-65d6b968f01ce\"",
+     "modified": "Fri, 09 Oct 2026 17:22:09 GMT",
+     "sha": "9b4a064b866df7b8",
+     "bytes": 1245357,
+     "published": "09-10-2026 22:48:57"
     }
    },
-   "items": 427,
-   "fetched": "2026-10-09 20:19 IST"
+   "items": 2092,
+   "fetched": "2026-10-09 23:16 IST"
   }
  },
- "updated": "2026-10-09 20:20 IST"
+ "updated": "2026-10-09 23:16 IST"
 }
