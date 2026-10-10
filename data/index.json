@@ -496,10 +496,24 @@
      "sha": "ab409862fdc6a471",
      "bytes": 511484,
      "published": "10-10-2026 15:44:13"
+    },
+    "M_J_2": {
+     "etag": "\"8f63f-65d7b95fdf1b9\"",
+     "modified": "Sat, 10 Oct 2026 12:27:19 GMT",
+     "sha": "1ef12e70d753e30a",
+     "bytes": 587327,
+     "published": "10-10-2026 17:37:20"
+    },
+    "M_S_2": {
+     "etag": "\"7cb5e-65d7b90e1bd11\"",
+     "modified": "Sat, 10 Oct 2026 12:25:53 GMT",
+     "sha": "1185ed8f3e142734",
+     "bytes": 510814,
+     "published": "10-10-2026 17:50:11"
     }
    },
-   "items": 1441,
-   "fetched": "2026-10-10 16:14 IST"
+   "items": 1526,
+   "fetched": "2026-10-10 18:21 IST"
   },
   "2026-10-13": {
    "files": {
@@ -542,5 +556,5 @@
    "fetched": "2026-10-10 13:34 IST"
   }
  },
- "updated": "2026-10-10 16:14 IST"
+ "updated": "2026-10-10 18:21 IST"
 }
