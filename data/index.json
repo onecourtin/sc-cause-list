@@ -463,15 +463,15 @@
   "2026-10-11": {
    "files": {
     "M_J_1": {
-     "etag": "\"7b5b1-65d7cbea6e0cb\"",
-     "modified": "Sat, 10 Oct 2026 13:50:16 GMT",
-     "sha": "67b367ce33c9e837",
-     "bytes": 505265,
-     "published": "10-10-2026 19:19:52"
+     "etag": "\"7b5b0-65d8bf8323a95\"",
+     "modified": "Sun, 11 Oct 2026 08:00:06 GMT",
+     "sha": "e65f1e361b288ac1",
+     "bytes": 505264,
+     "published": "11-10-2026 13:29:45"
     }
    },
    "items": 2,
-   "fetched": "2026-10-10 19:40 IST"
+   "fetched": "2026-10-11 13:34 IST"
   },
   "2026-10-12": {
    "files": {
@@ -576,5 +576,5 @@
    "fetched": "2026-10-10 19:40 IST"
   }
  },
- "updated": "2026-10-10 19:40 IST"
+ "updated": "2026-10-11 13:35 IST"
 }
