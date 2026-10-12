@@ -1,6 +1,6 @@
 {
  "date": "2026-10-12",
- "updated": "2026-10-12 10:10 IST",
+ "updated": "2026-10-12 11:10 IST",
  "courts": {
   "1": {
    "msg": "SEQUENCE WOULD BE ITEM NOS 1 TO 25 52 PASS OVER THEN REST OF THE MATTERS",
@@ -12,10 +12,50 @@
    "seen": "10:10",
    "changed": "10:10"
   },
+  "5": {
+   "msg": "SEQUENCE WOULD BE ITEM NOS. 1 TO 38 55 PASSOVER IF ANY THEREAFTER ITEM NOS. 40 TO 54",
+   "seen": "11:10",
+   "changed": "11:10"
+  },
+  "6": {
+   "msg": "sequence item nos. 1 to 39 53 fresh passover 40 to 51 52",
+   "seen": "11:10",
+   "changed": "11:10"
+  },
+  "7": {
+   "msg": "Bail and fresh matters from the main and suppl. list will be taken up first then passover of such matters",
+   "seen": "11:10",
+   "changed": "11:10"
+  },
+  "8": {
+   "msg": "SEQUENCE WOULD BE ITEM NOS.1 TO 14 56 PO IF ANY ITEM NO.15 ONWARDS AS PER CAUSELIST",
+   "seen": "11:10",
+   "changed": "11:10"
+  },
   "10": {
    "msg": "Seq.Item Nos.1 to 7 53 54 59 55 and 8 to 52 56 57.1 and pass over matters and Item No.43 at 2 p.m.",
    "seen": "10:10",
    "changed": "10:10"
+  },
+  "12": {
+   "msg": "Todays sequence 1 to 27 71 passovers 28 to 70",
+   "seen": "11:10",
+   "changed": "11:10"
+  },
+  "13": {
+   "msg": "SINGLE JUDGE AND CHAMBER MATTERS WILL BE TAKEN UP IMMEDIATELY AFTER NORMAL COURT WORK IS OVER",
+   "seen": "11:10",
+   "changed": "11:10"
+  },
+  "14": {
+   "msg": "sequence would be item nos. 1 to 31 53 56 pass over if any then 32 to 52 54",
+   "seen": "11:10",
+   "changed": "11:10"
+  },
+  "15": {
+   "msg": "ITEM 301 WILL BE TAKEN IMMEDIATELY AFTER THE NORMAL WORK OF THIS COURT AND COURT 14 WILL BE OVER",
+   "seen": "11:10",
+   "changed": "11:10"
   }
  }
 }
