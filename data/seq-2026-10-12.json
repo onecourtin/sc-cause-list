@@ -1,0 +1,21 @@
+{
+ "date": "2026-10-12",
+ "updated": "2026-10-12 10:10 IST",
+ "courts": {
+  "1": {
+   "msg": "SEQUENCE WOULD BE ITEM NOS 1 TO 25 52 PASS OVER THEN REST OF THE MATTERS",
+   "seen": "10:10",
+   "changed": "10:10"
+  },
+  "2": {
+   "msg": "SEQUENCE 1 TO 34 51 TO 53 PASS OVER IF ANY 35 TO 49 50 AT 1 P.M. AT CHAMBER",
+   "seen": "10:10",
+   "changed": "10:10"
+  },
+  "10": {
+   "msg": "Seq.Item Nos.1 to 7 53 54 59 55 and 8 to 52 56 57.1 and pass over matters and Item No.43 at 2 p.m.",
+   "seen": "10:10",
+   "changed": "10:10"
+  }
+ }
+}
