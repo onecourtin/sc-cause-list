@@ -538,10 +538,10 @@
      "published": "09-10-2026 19:43:12"
     },
     "M_J_1": {
-     "etag": "\"13080f-65d9e6d233b95\"",
-     "modified": "Mon, 12 Oct 2026 06:01:17 GMT",
-     "sha": "e7500adceb0e353f",
-     "bytes": 1247247,
+     "etag": "\"133e5b-65da11b6fc103\"",
+     "modified": "Mon, 12 Oct 2026 09:13:11 GMT",
+     "sha": "88b1f7a36f08767c",
+     "bytes": 1261147,
      "published": "09-10-2026 22:48:57"
     },
     "M_R_1": {
@@ -552,8 +552,8 @@
      "published": "10-10-2026 12:54:22"
     }
    },
-   "items": 2174,
-   "fetched": "2026-10-12 11:37 IST"
+   "items": 2217,
+   "fetched": "2026-10-12 15:21 IST"
   },
   "2026-10-14": {
    "files": {
@@ -570,11 +570,18 @@
      "sha": "97f58c7c1dfed98c",
      "bytes": 822372,
      "published": "10-10-2026 19:05:45"
+    },
+    "M_R_1": {
+     "etag": "\"845f0-65da1431421f9\"",
+     "modified": "Mon, 12 Oct 2026 09:24:16 GMT",
+     "sha": "ca486e486bdf9d5a",
+     "bytes": 542192,
+     "published": "12-10-2026 14:53:20"
     }
    },
-   "items": 1535,
-   "fetched": "2026-10-10 19:40 IST"
+   "items": 1707,
+   "fetched": "2026-10-12 15:22 IST"
   }
  },
- "updated": "2026-10-12 11:38 IST"
+ "updated": "2026-10-12 15:22 IST"
 }
