@@ -600,15 +600,22 @@
      "published": "13-10-2026 16:02:45"
     },
     "F_J_2": {
-     "etag": "\"832f3-65db77768ef5a\"",
-     "modified": "Tue, 13 Oct 2026 11:53:44 GMT",
-     "sha": "c0409b295608016f",
-     "bytes": 537331,
-     "published": "13-10-2026 17:19:09"
+     "etag": "\"aa0a4-65db80afef6a4\"",
+     "modified": "Tue, 13 Oct 2026 12:35:00 GMT",
+     "sha": "1c7382242f4d3047",
+     "bytes": 696484,
+     "published": "13-10-2026 17:45:52"
+    },
+    "M_R_2": {
+     "etag": "\"7be1a-65db7eb934871\"",
+     "modified": "Tue, 13 Oct 2026 12:26:12 GMT",
+     "sha": "e12182df8dbb7207",
+     "bytes": 507418,
+     "published": "13-10-2026 17:55:50"
     }
    },
-   "items": 1821,
-   "fetched": "2026-10-13 17:48 IST"
+   "items": 2088,
+   "fetched": "2026-10-13 18:28 IST"
   },
   "2026-10-15": {
    "files": {
@@ -631,5 +638,5 @@
    "fetched": "2026-10-13 14:37 IST"
   }
  },
- "updated": "2026-10-13 17:48 IST"
+ "updated": "2026-10-13 18:28 IST"
 }
