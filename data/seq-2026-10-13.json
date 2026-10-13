@@ -1,16 +1,16 @@
 {
  "date": "2026-10-13",
- "updated": "2026-10-13 13:00 IST",
+ "updated": "2026-10-13 13:20 IST",
  "courts": {
   "1": {
-   "msg": "SEQUENCE WOULD BE ITEM NOS 1 TO 6 8 TO 21 39 40 TO 52 PASS OVER THEN REST OF THE MATTERS 810",
+   "msg": "ITEM NOS. 32 24 AND 25 WILL BE TAKEN UP AT 2 PM",
    "seen": "11:10",
-   "changed": "13:00"
+   "changed": "13:20"
   },
   "2": {
-   "msg": "SEQUENCE 1 TO 17 51 52 PASS OVER IF ANY 24 31 18 TO 23 25 TO 30 32 TO 44 46 TO 50 53 TO 55 ITEM 301 WILL BE TAKEN UP AT 2 P.M.",
+   "msg": "SEQUENCE ITEM 301 WILL BE TAKEN UP AT 2 P.M. REST OF BOARD IS DISCHARGED",
    "seen": "11:10",
-   "changed": "11:10"
+   "changed": "13:20"
   },
   "4": {
    "msg": "SEQUENCE WILL BE FRESH MATTERS 1 TO 17 45 PASS OVER AND THEN 1844 AND PASS OVERS",
@@ -33,9 +33,9 @@
    "changed": "11:10"
   },
   "8": {
-   "msg": "SEQ WOULD BE ITEM NOS.56 1 TO 4 57 59 PO IF ANY ITEM NO.5 ONWARDS AS PER CAUSELIST ITEM NO.39 AT 11.45 AM ITEM NO.58 AT 12.30 IN COMMITTEE ROOM",
+   "msg": "ADVOCATE SUGANDH RATHOR IS REQUIRED TO APPEAR IN ITEM NO.57",
    "seen": "11:10",
-   "changed": "13:00"
+   "changed": "13:20"
   },
   "10": {
    "msg": "Seq.Item Nos.1 to 3 51 to 54 56 57 4 to 50 55 58 59 and pass over matters",
