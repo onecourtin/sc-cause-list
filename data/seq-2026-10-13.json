@@ -1,11 +1,11 @@
 {
  "date": "2026-10-13",
- "updated": "2026-10-13 12:20 IST",
+ "updated": "2026-10-13 12:40 IST",
  "courts": {
   "1": {
-   "msg": "LD. ADVOCATES APPEARING IN ITEM 24 AND 25 ARE REQUESTED TO COME TO COURT URGENTLY",
+   "msg": "ITEM NOS. 24 AND 25 WILL BE TAKEN UP AT 2 PM",
    "seen": "11:10",
-   "changed": "12:20"
+   "changed": "12:40"
   },
   "2": {
    "msg": "SEQUENCE 1 TO 17 51 52 PASS OVER IF ANY 24 31 18 TO 23 25 TO 30 32 TO 44 46 TO 50 53 TO 55 ITEM 301 WILL BE TAKEN UP AT 2 P.M.",
@@ -56,6 +56,11 @@
    "msg": "ITEM 18 TO BE TAKEN UP AT 2 PM",
    "seen": "11:20",
    "changed": "11:20"
+  },
+  "14": {
+   "msg": "pass over matters will be taken up after item no.11 is over instead 12.30 pm",
+   "seen": "12:40",
+   "changed": "12:40"
   },
   "16": {
    "msg": "MS. RUCHIRA GOYAL STANDING COUNSEL FOR THE STATE OF UP PLS. APPEAR IN COURT NO. 16 IMMEDIATELY.",
