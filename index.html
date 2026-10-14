@@ -6,14 +6,21 @@
 <title>Supreme Court Cause List — OneCourt</title>
 <meta name="description" content="Supreme Court of India daily cause list as a searchable web page — court-wise, with case numbers, parties, advocates and IAs. Updated automatically from the official lists.">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800&display=swap');
+@font-face{font-family:'Archivo';font-style:normal;font-weight:400 800;font-display:swap;
+  src:url('fonts/archivo-400-800-normal.woff2') format('woff2');}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:400;font-display:swap;
+  src:url('fonts/ibm-plex-mono-400-normal.woff2') format('woff2');}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:600;font-display:swap;
+  src:url('fonts/ibm-plex-mono-600-normal.woff2') format('woff2');}
 :root{
-  --ink:#201e1d; --paper:#FFFFFF; --panel:#f3f2f2; --card-alt:#eae9e9;
-  --line:#d7d3d3; --primary:#201e1d; --on-primary:#f3f2f2; --nav-dim:#9b9797;
-  --accent:#ec3013; --accent-dark:#ae1800; --accent-bg:#fff2ef;
-  --gold:#7d7979; --muted:#605d5d; --faint:#9b9797;
-  --ok:#1F8A5F; --danger:#7a1220; --warn:#B45309; --warn-bg:#FEF3C7;
+  --ink:#111827; --paper:#FAFAF8; --panel:#F2F1ED; --card-alt:#ECEAE5;
+  --line:#D9D6CF; --primary:#18223A; --on-primary:#E6EBF5; --nav-dim:#8B9BB2;
+  --accent:#2563EB; --accent-dark:#1D4ED8; --accent-bg:#EEF3FE;
+  --gold:#B8822A; --gold-bg:#FDF6E8; --muted:#636B7A; --faint:#9CA5B2;
+  --ok:#1F8A5F; --danger:#DC2626; --warn:#B45309; --warn-bg:#FEF3C7;
   --font-ui:'Archivo',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+  --font-mono:'IBM Plex Mono','SF Mono',Consolas,monospace;
+  --font-doc:Georgia,'Times New Roman',Times,serif;
 }
 [hidden]{display:none!important;}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -72,7 +79,7 @@ select.older{font-family:inherit;font-size:13px;padding:6px 8px;border:1.5px sol
 
 .search{position:relative;}
 .search input{width:100%;font-family:inherit;font-size:15px;padding:10px 38px 10px 12px;border:1.5px solid var(--line);background:#fff;color:var(--ink);outline:none;}
-.search input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(236,48,19,.14);}
+.search input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,.14);}
 .search .clear{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:none;background:none;font-size:20px;line-height:1;color:var(--faint);cursor:pointer;padding:4px 8px;}
 .search .clear:hover{color:var(--ink);}
 .hint{font-size:12px;color:var(--muted);margin-top:6px;}
@@ -199,6 +206,35 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
   .section-title{padding:8px 14px;top:0;position:static;}
   .search input{font-size:16px;}
 }
+
+/* ── House style shared with NCLT / NCLAT ── */
+body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
+::selection{background:#dbe6fd;color:#111827;}
+.site-header::after{content:'';display:block;height:3px;background:linear-gradient(90deg,var(--gold) 0%,var(--accent) 100%);}
+.site-header .tag{font-family:var(--font-mono);letter-spacing:.08em;}
+details.oc-tools>summary .car{font-family:var(--font-mono);}
+.oc-logo .name{font-weight:700;letter-spacing:-.01em;}
+header.top{border-bottom-color:var(--primary);}
+header.top .eyebrow{font-family:var(--font-mono);font-size:10px;letter-spacing:.18em;color:var(--gold);font-weight:600;}
+header.top h1 em{font-style:italic;font-family:var(--font-doc);font-weight:400;color:var(--accent);letter-spacing:-.01em;}
+.ctl-label,.section-title,.stack-title,.list-head b,.advs .lbl,.parties .vs,.no .pg,.hint,.tag-pill,.room-chg,.site-footer .mono,.sources>span{font-family:var(--font-mono);}
+.ctl-label{font-size:10px;letter-spacing:.15em;font-weight:600;}
+.section-title{font-size:10.5px;font-weight:600;}
+.stack-title{font-size:11.5px;font-weight:600;background:var(--primary);}
+.case,.no{font-family:var(--font-mono);}
+.case{font-size:13px;font-weight:600;}
+.no{font-size:16px;font-weight:600;}
+.case .ias{font-family:var(--font-ui);}
+.search input:focus,.pick2 input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,.14);}
+.chip[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);}
+.list-head{background:var(--gold-bg);}
+
+/* ── Page header (same as the VC Hearing Links pages) ── */
+header.top{border-bottom:none;border-left:5px solid var(--accent);padding:2px 0 2px 22px;margin-bottom:26px;align-items:flex-end;}
+header.top .eyebrow{font-family:var(--font-ui);font-size:12px;font-weight:700;letter-spacing:.22em;color:var(--accent);margin-bottom:12px;}
+header.top h1{font-size:54px;font-weight:800;letter-spacing:-.035em;line-height:1.02;}
+header.top h1 em{font-style:normal;font-family:inherit;font-weight:800;color:var(--accent);letter-spacing:-.035em;}
+@media(max-width:760px){header.top{padding-left:16px;}header.top h1{font-size:36px;}header.top .eyebrow{font-size:11px;}}
 </style>
 </head>
 <body>
@@ -228,6 +264,7 @@ mark{background:#ffe08a;color:inherit;padding:0 1px;}
             <a href="/case-status.html">Case Status</a>
             <a href="https://onecourt.in/bare-acts">Bare Acts</a>
             <a class="current" href="/sc/causelist/">SC Cause List</a>
+            <a href="/dhc/causelist/">Delhi HC Cause List</a>
             <a href="https://nclat.onecourt.in">NCLAT Cause List</a>
           </div>
         </details>
