@@ -669,15 +669,15 @@
      "published": "14-10-2026 20:27:33"
     },
     "M_J_2": {
-     "etag": "\"91b8d-65dcfad6f0534\"",
-     "modified": "Wed, 14 Oct 2026 16:46:49 GMT",
-     "sha": "9d297c06b30dfe95",
-     "bytes": 596877,
-     "published": "14-10-2026 21:45:26"
+     "etag": "\"9632a-65dd062873862\"",
+     "modified": "Wed, 14 Oct 2026 17:37:27 GMT",
+     "sha": "cce1ecb2a4436c71",
+     "bytes": 615210,
+     "published": "14-10-2026 23:00:12"
     }
    },
-   "items": 2032,
-   "fetched": "2026-10-14 22:34 IST"
+   "items": 2067,
+   "fetched": "2026-10-14 23:31 IST"
   },
   "2026-10-16": {
    "files": {
@@ -714,5 +714,5 @@
    "fetched": "2026-10-14 18:41 IST"
   }
  },
- "updated": "2026-10-14 22:35 IST"
+ "updated": "2026-10-14 23:32 IST"
 }
