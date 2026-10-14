@@ -634,11 +634,11 @@
   "2026-10-15": {
    "files": {
     "M_J_1": {
-     "etag": "\"bee60-65da79dcc8787\"",
-     "modified": "Mon, 12 Oct 2026 16:59:08 GMT",
-     "sha": "e59b80b3b5241a47",
-     "bytes": 781920,
-     "published": "12-10-2026 22:12:34"
+     "etag": "\"bf0cd-65dcf405cff07\"",
+     "modified": "Wed, 14 Oct 2026 16:16:19 GMT",
+     "sha": "c94612174735ad87",
+     "bytes": 782541,
+     "published": "14-10-2026 21:24:49"
     },
     "M_R_1": {
      "etag": "\"84f94-65db4d4b7389c\"",
@@ -667,10 +667,17 @@
      "sha": "ce7ec5b5e2a55e66",
      "bytes": 1181165,
      "published": "14-10-2026 20:27:33"
+    },
+    "M_J_2": {
+     "etag": "\"8d218-65dcf597c966a\"",
+     "modified": "Wed, 14 Oct 2026 16:23:21 GMT",
+     "sha": "6a4a8f324e72a127",
+     "bytes": 578072,
+     "published": "14-10-2026 21:45:26"
     }
    },
-   "items": 1894,
-   "fetched": "2026-10-14 20:58 IST"
+   "items": 2009,
+   "fetched": "2026-10-14 21:58 IST"
   },
   "2026-10-16": {
    "files": {
@@ -707,5 +714,5 @@
    "fetched": "2026-10-14 18:41 IST"
   }
  },
- "updated": "2026-10-14 20:58 IST"
+ "updated": "2026-10-14 21:59 IST"
 }
