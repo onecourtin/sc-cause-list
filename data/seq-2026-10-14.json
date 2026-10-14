@@ -1,6 +1,6 @@
 {
  "date": "2026-10-14",
- "updated": "2026-10-14 11:40 IST",
+ "updated": "2026-10-14 13:20 IST",
  "courts": {
   "1": {
    "msg": "sequence would be item nos. 1 to 12 23 24 pass over then rest of the matters",
@@ -38,9 +38,14 @@
    "changed": "11:00"
   },
   "10": {
-   "msg": "Seq.Item Nos.39 40 1 to 16 31 to 34 42 17 to 30 37 38 and 41 and 101 to 120 and pass over matters",
+   "msg": "Seq.Item Nos.40 25 18 to 30 37 38 and 41 P15 and 101 to 120 and pass over matters",
    "seen": "11:00",
-   "changed": "11:00"
+   "changed": "13:20"
+  },
+  "11": {
+   "msg": "Left over regular hearing matters of Court No. 11 from item 102 to 121 will be taken up in Court No. 18 at 2 PM",
+   "seen": "13:20",
+   "changed": "13:20"
   },
   "12": {
    "msg": "Seq item 1 to 22 30 to 33 passovers then 23 to 29 then regular matters",
@@ -53,9 +58,9 @@
    "changed": "11:00"
   },
   "14": {
-   "msg": "item no.101 will be taken up at 11.30 am",
+   "msg": "rest of the board is discharged for the day",
    "seen": "11:00",
-   "changed": "11:00"
+   "changed": "13:20"
   }
  }
 }
