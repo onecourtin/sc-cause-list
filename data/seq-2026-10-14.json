@@ -1,0 +1,61 @@
+{
+ "date": "2026-10-14",
+ "updated": "2026-10-14 11:00 IST",
+ "courts": {
+  "1": {
+   "msg": "sequence would be item nos. 1 to 12 23 24 pass over then rest of the matters",
+   "seen": "11:00",
+   "changed": "11:00"
+  },
+  "2": {
+   "msg": "SEQUENCE 1 TO 19 31 TO 33 PASS OVER IF ANY 20 TO 30 THEREAFTER AS PER LIST",
+   "seen": "11:00",
+   "changed": "11:00"
+  },
+  "4": {
+   "msg": "SEQUENCE WILL BE 33 34 37 38 FRESH MATTERS 1 TO 12 25 26 27 35 36 Pass Over THEN 13 TO 23 28 29 Pass Over REGULAR MATTERS AND AT 2 PM 30 31",
+   "seen": "11:00",
+   "changed": "11:00"
+  },
+  "5": {
+   "msg": "SEQUENCE WOULD BE ITEM NOS. 24 23 1 TO 11 18 TO 22 25 26 PASSOVER IF ANY THEREAFTER ITEM NO. 12 TO 17 REST AS PER LIST",
+   "seen": "11:00",
+   "changed": "11:00"
+  },
+  "6": {
+   "msg": "sequence item nos. 1 to 9 12 to 15 fresh passover 16 then 101 to 120 passover if any 10 11 17 and spl bench at 3.30 pm",
+   "seen": "11:00",
+   "changed": "11:00"
+  },
+  "7": {
+   "msg": "Bail and fresh matters of suppl shall be taken up after Bail and fresh matters of main list then passover of such matter shall be taken up immediately",
+   "seen": "11:00",
+   "changed": "11:00"
+  },
+  "8": {
+   "msg": "SEQUENCE WOULD BE ITEM NO.49 1 TO 4 47 48 PO IF ANY 5 ONWARDS AS PER CAUSELIST",
+   "seen": "11:00",
+   "changed": "11:00"
+  },
+  "10": {
+   "msg": "Seq.Item Nos.39 40 1 to 16 31 to 34 42 17 to 30 37 38 and 41 and 101 to 120 and pass over matters",
+   "seen": "11:00",
+   "changed": "11:00"
+  },
+  "12": {
+   "msg": "Seq item 1 to 22 3033 passover then 23 onwards",
+   "seen": "11:00",
+   "changed": "11:00"
+  },
+  "13": {
+   "msg": "SEQ 29 THEN AS PER LIST AND ITEM 27 TO BE TAKEN UP AT 2 PM",
+   "seen": "11:00",
+   "changed": "11:00"
+  },
+  "14": {
+   "msg": "item no.101 will be taken up at 11.30 am",
+   "seen": "11:00",
+   "changed": "11:00"
+  }
+ }
+}
