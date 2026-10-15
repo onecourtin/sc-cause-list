@@ -1,6 +1,6 @@
 {
  "date": "2026-10-15",
- "updated": "2026-10-15 15:10 IST",
+ "updated": "2026-10-15 16:00 IST",
  "courts": {
   "1": {
    "msg": "BOARD IS DISCHARGED FOR THE DAY",
@@ -48,9 +48,9 @@
    "changed": "13:00"
   },
   "10": {
-   "msg": "Seq.Item Nos.1 to 3 31 32 33 40 4 to 30 34 to 39 and pass over matters and 101 to 120",
+   "msg": "EXCEPT ITEM NO.35 AND 36 REST OF THE BOARD IS DISCHARGED FOR THE DAY.",
    "seen": "10:30",
-   "changed": "10:30"
+   "changed": "16:00"
   },
   "12": {
    "msg": "Board is discharged for the day except 101",
@@ -68,9 +68,9 @@
    "changed": "12:00"
   },
   "18": {
-   "msg": "Sq. Item Nos. 20 to 37 40 42 to 45 then 16",
+   "msg": "Sq. Item No. 34 then pass over matters 16 21 24 and 28",
    "seen": "14:04",
-   "changed": "14:04"
+   "changed": "16:00"
   }
  }
 }
