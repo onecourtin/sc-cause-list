@@ -1,6 +1,6 @@
 {
  "date": "2026-10-15",
- "updated": "2026-10-15 14:40 IST",
+ "updated": "2026-10-15 15:10 IST",
  "courts": {
   "1": {
    "msg": "BOARD IS DISCHARGED FOR THE DAY",
@@ -53,9 +53,9 @@
    "changed": "10:30"
   },
   "12": {
-   "msg": "Todays sequence 1 to 16 31 to 36 passovers 17 to 30 37 to 39 then Regular matters",
+   "msg": "Board is discharged for the day except 101",
    "seen": "10:30",
-   "changed": "10:30"
+   "changed": "15:10"
   },
   "13": {
    "msg": "REGULAR BOARD IS DISCHARGED FOR THE DAY",
