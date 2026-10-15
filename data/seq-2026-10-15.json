@@ -1,6 +1,6 @@
 {
  "date": "2026-10-15",
- "updated": "2026-10-15 14:04 IST",
+ "updated": "2026-10-15 14:10 IST",
  "courts": {
   "1": {
    "msg": "BOARD IS DISCHARGED FOR THE DAY",
@@ -18,9 +18,9 @@
    "changed": "11:10"
   },
   "4": {
-   "msg": "SEQUENCE WILL BE 1 to 13 23 25 26 27 30 PASS OVERS AND 1422 REGULAR MATTERS ITEM NOS.28 29 AT 2 PM",
+   "msg": "BOARD IS DISCHARGED FOR THE DAY EXCEPT ITEM NOS.28 AND 29",
    "seen": "10:30",
-   "changed": "10:30"
+   "changed": "14:10"
   },
   "5": {
    "msg": "SEQUENCE WOULD BE ITEM NOS. 1 TO 11 30 TO 38 PASSOVER IF ANY THEREAFTER ITEM NOS. 12 TO 29",
