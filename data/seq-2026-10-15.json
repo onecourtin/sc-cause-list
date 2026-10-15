@@ -1,6 +1,6 @@
 {
  "date": "2026-10-15",
- "updated": "2026-10-15 14:10 IST",
+ "updated": "2026-10-15 14:40 IST",
  "courts": {
   "1": {
    "msg": "BOARD IS DISCHARGED FOR THE DAY",
@@ -38,9 +38,9 @@
    "changed": "10:30"
   },
   "8": {
-   "msg": "SPECIAL BENCH AT 2 PM",
+   "msg": "SPECIAL BENCH AT 3 PM",
    "seen": "10:30",
-   "changed": "13:31"
+   "changed": "14:40"
   },
   "9": {
    "msg": "except item no. 301 board for regular matters is discharged for the day",
