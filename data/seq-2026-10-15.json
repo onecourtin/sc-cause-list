@@ -1,6 +1,6 @@
 {
  "date": "2026-10-15",
- "updated": "2026-10-15 12:40 IST",
+ "updated": "2026-10-15 13:00 IST",
  "courts": {
   "1": {
    "msg": "NOW SEQUENCE WOULD BE ITEM 8 AND REST OF THE MATTERS MR. SHIV BHATNAGAR ADV IS REQUESTED TO CONTACT THE COURT MASTER URGENTLY",
@@ -41,6 +41,11 @@
    "msg": "SEQUENCE WOULD BE ITEM NO.1 46 TO 49 PO IF ANY ITEM NO.2 ONWARDS AS PER CAUSELIST",
    "seen": "10:30",
    "changed": "10:30"
+  },
+  "9": {
+   "msg": "except item no. 301 board for regular matters is discharged for the day",
+   "seen": "13:00",
+   "changed": "13:00"
   },
   "10": {
    "msg": "Seq.Item Nos.1 to 3 31 32 33 40 4 to 30 34 to 39 and pass over matters and 101 to 120",
